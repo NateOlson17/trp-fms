@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { Tabs } from 'expo-router';
 
 import { onValue, ref } from 'firebase/database';
-import { rtdb } from '@/app/rtdb_config';
+import rtdb from '@/app/rtdb_config';
 
 import Gear, { GearContainer } from '@/app/utils/Gear';
 import Event from '@/app/utils/Event';
@@ -12,6 +12,7 @@ import Technician from '@/app/utils/Technician';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { COLORS } from '@/app/globals'
+import ServiceTicket from '@/app/utils/ServiceTicket';
 
 export const GearContext = createContext<GearContainer>({} as GearContainer);
 
@@ -33,7 +34,13 @@ export default function TabLayout() {
         snapshot.forEach(container => { //for each category object in master container (infrastructure, lxFixtures, etc)
           container.forEach(gearItem => { //for each Gear item in category object
             let g = gearItem.val();
-            gear[container.key as keyof GearContainer].push(new Gear(g.name, g.includes, g.purchaseCost, g.rentalCost, g.powerDraw, g.qtyOwned, g.notes)) //get key of current category object and push to corresponding gear array a new Gear object with data from current item
+            let tickets: ServiceTicket[] = [];
+            if (g.serviceTickets) {
+              g.serviceTickets.forEach((ticket: ServiceTicket) => {
+                tickets.push(new ServiceTicket(ticket.qty, ticket.notes));
+              });
+            }
+            gear[container.key as keyof GearContainer].push(new Gear(g.name, g.includes, g.avgPurchaseCost, g.rentalCost, g.powerDraw, g.qtyOwned, g.qtyAvail, tickets, g.notes)) //get key of current category object and push to corresponding gear array a new Gear object with data from current item
             //structure of gear state is now a GearContainer object consisting of arrays for each category. Each array contains Gear objects
           });
         });

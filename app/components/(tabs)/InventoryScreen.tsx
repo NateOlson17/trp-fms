@@ -1,48 +1,19 @@
 import { useContext } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { View } from 'react-native';
 import { GearContext } from './_layout'
-
-import Gear from '@/app/utils/Gear';
+import { COLORS } from '@/app/globals';
+import GearExpandable from '../GearExpandable';
 
 const InventoryScreen = () => {
     const gear = useContext(GearContext)
 
-    const renderGearItem = ({ item }: {item: Gear}) => {
-        return (
-          <View>
-            <Text style={{marginTop: 15}}>{item.name}</Text>
-            <Text>{item.qtyOwned} </Text>
-          </View>
-      );
-    }
-
     return(
-        <View style={{marginTop: 50}}>
-            <FlatList
-                data={gear.infrastructure}
-                renderItem={renderGearItem}
-                keyExtractor={(gearItem) => (gearItem.name)}
-            />
-            <FlatList
-                data={gear.laserFixtures}
-                renderItem={renderGearItem}
-                keyExtractor={(gearItem) => (gearItem.name)}
-            />
-            <FlatList
-                data={gear.lxFixtures}
-                renderItem={renderGearItem}
-                keyExtractor={(gearItem) => (gearItem.name)}
-            />
-            <FlatList
-                data={gear.sfx}
-                renderItem={renderGearItem}
-                keyExtractor={(gearItem) => (gearItem.name)}
-            />
-            <FlatList
-                data={gear.showControl}
-                renderItem={renderGearItem}
-                keyExtractor={(gearItem) => (gearItem.name)}
-            />
+        <View style={{paddingTop: 50, paddingBottom: 100, flex: 1, backgroundColor: COLORS.BLACK}}>
+            <GearExpandable name='INFRASTRUCTURE' data={gear.infrastructure}/>
+            <GearExpandable name='LASER FIXTURES' data={gear.laserFixtures}/>
+            <GearExpandable name='LX FIXTURES' data={gear.lxFixtures}/>
+            <GearExpandable name='SFX' data={gear.sfx}/>
+            <GearExpandable name='SHOW CONTROL' data={gear.showControl}/>
         </View>
     );
 }

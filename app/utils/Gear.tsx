@@ -11,7 +11,7 @@ export interface GearContainer {
 export default class Gear {
         name: string;
         includes: string[];
-        purchaseCost: number;
+        avgPurchaseCost: number;
         rentalCost: number;
         powerDraw: number;
         qtyOwned: number;
@@ -22,21 +22,23 @@ export default class Gear {
         constructor(
                 _name: string,
                 _includes: string[],
-                _purchaseCost: number,
+                _avgPurchaseCost: number,
                 _rentalCost: number,
                 _powerDraw: number,
                 _qtyOwned: number,
+                _qtyAvail: number,
+                _serviceTickets: ServiceTicket[],
                 _notes: string
         ) {
                 this.name = _name;
                 this.includes = _includes;
-                this.purchaseCost = _purchaseCost;
+                this.avgPurchaseCost = _avgPurchaseCost;
                 this.rentalCost = _rentalCost;
                 this.powerDraw = _powerDraw;
                 this.qtyOwned = _qtyOwned;
+                this.qtyAvail = _qtyAvail;
+                this.serviceTickets = _serviceTickets;
                 this.notes = _notes;
-                this.serviceTickets = [];
-                this.qtyAvail = _qtyOwned;
         }
 
         break(qty: number, reason: string, notes: string) {

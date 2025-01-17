@@ -14,4 +14,5 @@ const firebaseConfig = {
   };
 
   const app = initializeApp(firebaseConfig);
-  export const rtdb = getDatabase(app);
+  const rtdb = getDatabase(app);
+  export default rtdb;
