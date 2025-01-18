@@ -3,10 +3,10 @@ export default class ServiceTicket {
     notes: string;
 
     constructor(
-        _qty: number,
-        _notes: string,
+        qty: number,
+        notes: string,
     ) {
-        this.qty = _qty;
-        this.notes = _notes;    
+        this.qty = qty;
+        this.notes = notes;    
     }
 }

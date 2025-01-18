@@ -2,23 +2,36 @@
 
 ## GENERAL
 
-!-Comment everywhere
+!-Cleanup especially in tab layout and cleanup comments
 -Update DB content
 -Set up caching
--Investigate useMemo
 -Login via Technician object (add permissions to Technician)
 -Implement Firebase rules
 
 ## INVENTORY SCREEN
 
-!-Add purchase date to Gear and other optional params
-!-Make showTickets functional (ternary for entire gearCard, switch content of gearCard with animation to display service qty, notes, and edit/fix/exit options)
--Add search, break (on card itself?), and add gear (optional params in constructor? Add to finance tracker) features at bottom. Make sure content doesn't overflow and cut off gearCards
+-Add sorting/filtering
+-Add search
+-Make showTickets functional (via modal, display service qty, notes, and edit/fix/exit options)
+-Add search
+-Add damage report button
+!-Implement add gear
+-Fix FlatList overflow
+-Add edit button on gearCard itself, brings up modal just like showTickets
 
 ## EVENT SCREEN
 
--Add invoiced/quoted date to event
--Add contact info to Technician
--Generate Invoice feature (auto fill using logged in Technician info)
+-Sorting/filtering
+-Display events on calendar
+-Implement add event
+-Add search
 
 ## FINANCE SCREEN
+
+-Purchase date/qty/cost for gear
+-Income from Events
+-Tab for receivable and payable
+-Other income like gear sales
+-Cost breakdown by event
+-Sorting/filtering
+-Add search

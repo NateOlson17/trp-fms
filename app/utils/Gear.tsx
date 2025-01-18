@@ -20,25 +20,25 @@ export default class Gear {
         notes: string;
 
         constructor(
-                _name: string,
-                _includes: string[],
-                _avgPurchaseCost: number,
-                _rentalCost: number,
-                _powerDraw: number,
-                _qtyOwned: number,
-                _qtyAvail: number,
-                _serviceTickets: ServiceTicket[],
-                _notes: string
+                name: string,
+                includes: string[],
+                avgPurchaseCost: number,
+                rentalCost: number,
+                powerDraw: number,
+                qtyOwned: number,
+                qtyAvail: number,
+                serviceTickets: ServiceTicket[],
+                notes: string
         ) {
-                this.name = _name;
-                this.includes = _includes;
-                this.avgPurchaseCost = _avgPurchaseCost;
-                this.rentalCost = _rentalCost;
-                this.powerDraw = _powerDraw;
-                this.qtyOwned = _qtyOwned;
-                this.qtyAvail = _qtyAvail;
-                this.serviceTickets = _serviceTickets;
-                this.notes = _notes;
+                this.name = name;
+                this.includes = includes;
+                this.avgPurchaseCost = avgPurchaseCost;
+                this.rentalCost = rentalCost;
+                this.powerDraw = powerDraw;
+                this.qtyOwned = qtyOwned;
+                this.qtyAvail = qtyAvail;
+                this.serviceTickets = serviceTickets;
+                this.notes = notes;
         }
 
         break(qty: number, reason: string, notes: string) {
