@@ -15,6 +15,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { COLORS } from '@/app/globals'
 
 export const GearContext = createContext<GearContainer>({} as GearContainer);
+export const EventContext = createContext<Event[]>([]);
+export const TechContext = createContext<Technician[]>([]);
 
 export default function TabLayout() {
   const [gear, setGear] = useState<GearContainer>({
@@ -28,53 +30,58 @@ export default function TabLayout() {
   const [techs, setTechs] = useState<Technician[]>([]);
 
   useEffect(() => {
-    const gearRef = ref(rtdb, "GearContainer"); //create reference to firebase rtdb at master gear container
+    const gearRef = ref(rtdb, 'GearContainer'); //create reference to firebase rtdb at master gear container
     onValue(gearRef, (snapshot) => {
       if (snapshot.exists()) {
+        var tempGear: GearContainer = {infrastructure: [], laserFixtures: [], lxFixtures: [], sfx: [], showControl: []};
         snapshot.forEach(container => { //for each category object in master container (infrastructure, lxFixtures, etc)
           container.forEach(gearItem => { //for each Gear item in category object
             let g = gearItem.val();
-            gear[container.key as keyof GearContainer].push(new Gear(
+            tempGear[container.key as keyof GearContainer].push(new Gear(
               g.name,
               g.includes,
               g.avgPurchaseCost,
               g.rentalCost,
               g.powerDraw,
               g.qtyOwned,
-              g.qtyAvail,
               g.serviceTickets? g.serviceTickets as ServiceTicket[] : [],
-              g.notes
+              g.notes,
+              container.key + '/' + gearItem.key
             )) //get key of current category object and push to corresponding gear array a new Gear object with data from current item
             //structure of gear state is now a GearContainer object consisting of arrays for each category. Each array contains Gear objects
           });
         });
+        setGear(tempGear);
       } else {
-        console.log("USER OFFLINE");
+        console.log('USER OFFLINE');
         //give notif that database fetch failed
         //use cached data (UNIMPLEMENTED)
       }
     });
     
-    const techRef = ref(rtdb, "TechnicianContainer"); //create reference to firebase rtdb at master tech container
+    const techRef = ref(rtdb, 'TechnicianContainer'); //create reference to firebase rtdb at tech container
     onValue(techRef, (snapshot) => {
       if (snapshot.exists()) {
+        var tempTechs: Technician[] = [];
         snapshot.forEach(tech => {
           let t = tech.val();
-          techs.push(t as Technician); //create new Technician with DB data
+          tempTechs.push({...t, key: tech.key} as Technician); //create new Technician with DB data
         });
+        setTechs(tempTechs);
       } else {
-        console.log("USER OFFLINE");
+        console.log('USER OFFLINE');
         //give notif that database fetch failed
         //use cached data (UNIMPLEMENTED)
       }
     });
 
-    const eventRef = ref(rtdb, "EventContainer"); //create reference to firebase rtdb at master event container
+    const eventRef = ref(rtdb, 'EventContainer'); //create reference to firebase rtdb at event container
     onValue(eventRef, (snapshot) => {
       if (snapshot.exists()) {
+        var tempEvents: Event[] = [];
         snapshot.forEach(event => {
           let e = event.val();
-          events.push(new Event(
+          tempEvents.push(new Event(
             e.name, 
             e.location,
             e.client,
@@ -98,11 +105,13 @@ export default function TabLayout() {
             e.outbounded,
             e.outboundNotes,
             e.inbounded,
-            e.inboundNotes
-          )); //create new Event with DB data
+            e.inboundNotes,
+            event.key
+          )); //create new event for each item in db container
         });
+        setEvents(tempEvents);
       } else {
-        console.log("USER OFFLINE");
+        console.log('USER OFFLINE');
         //give notif that database fetch failed
         //use cached data (UNIMPLEMENTED)
       }
@@ -111,6 +120,8 @@ export default function TabLayout() {
   
   return (
     <GearContext.Provider value={gear}>
+    <TechContext.Provider value={techs}>
+    <EventContext.Provider value={events}>
       <Tabs screenOptions={{
         tabBarActiveTintColor: COLORS.GOLD,
         tabBarInactiveTintColor: COLORS.WEAK_BROWN,
@@ -120,8 +131,9 @@ export default function TabLayout() {
         },
         tabBarShowLabel: false
       }}>
+      
         <Tabs.Screen
-          name="InventoryScreen" 
+          name='InventoryScreen' 
           options={{
             headerShown: false,
             tabBarIcon: ({ focused, color }) => (
@@ -129,9 +141,11 @@ export default function TabLayout() {
                 <Ionicons name={focused ? 'construct' : 'construct-outline'} color={color} size={50} />
               </View>
             )
-          }}/>
+          }}
+        />
+                
         <Tabs.Screen 
-          name="CalendarScreen" 
+          name='CalendarScreen' 
           options={{
             headerShown: false,
             tabBarIcon: ({ focused, color }) => (
@@ -140,9 +154,10 @@ export default function TabLayout() {
               </View>
             )
           }}
-          />
+        />
+
         <Tabs.Screen 
-          name="FinanceScreen" 
+          name='FinanceScreen' 
           options={{
             headerShown: false,
             tabBarIcon: ({ focused, color }) => (
@@ -152,9 +167,11 @@ export default function TabLayout() {
             )
           }}
         />
+        
       </Tabs>
-    </GearContext.Provider>
-    
+    </EventContext.Provider>
+    </TechContext.Provider>
+    </GearContext.Provider>    
   );
 }
 

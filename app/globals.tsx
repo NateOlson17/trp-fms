@@ -5,5 +5,6 @@ export enum COLORS {
     GOLD = '#b17304',
     WEAK_BROWN = '#6e4702',
     RED = '#721918',
-    GREEN = '#447053'
+    GREEN = '#447053',
+    LIGHT_GRAY = '#808381'
 }

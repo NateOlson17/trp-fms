@@ -35,6 +35,8 @@ export default class Event {
     inbounded: boolean;
     inboundNotes: string;
 
+    key: string;
+
     constructor(
         name: string,
         location: string,
@@ -66,7 +68,9 @@ export default class Event {
         outbounded: boolean,
         outboundNotes: string,
         inbounded: boolean,
-        inboundNotes: string
+        inboundNotes: string,
+
+        key: string
     ) {
         this.name = name;
         this.location = location;
@@ -99,6 +103,8 @@ export default class Event {
         this.outboundNotes= outboundNotes;
         this.inbounded = inbounded;
         this.inboundNotes = inboundNotes;
+
+        this.key = key;
     }
 
 

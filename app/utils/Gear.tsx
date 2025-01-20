@@ -1,3 +1,6 @@
+import { ref, set } from 'firebase/database';
+import rtdb from '@/app/rtdb_config';
+
 import ServiceTicket from './ServiceTicket';
 
 export interface GearContainer {
@@ -15,9 +18,9 @@ export default class Gear {
         rentalCost: number;
         powerDraw: number;
         qtyOwned: number;
-        qtyAvail: number;
         serviceTickets: ServiceTicket[];
         notes: string;
+        key: string;
 
         constructor(
                 name: string,
@@ -26,9 +29,9 @@ export default class Gear {
                 rentalCost: number,
                 powerDraw: number,
                 qtyOwned: number,
-                qtyAvail: number,
                 serviceTickets: ServiceTicket[],
-                notes: string
+                notes: string,
+                key: string
         ) {
                 this.name = name;
                 this.includes = includes;
@@ -36,16 +39,14 @@ export default class Gear {
                 this.rentalCost = rentalCost;
                 this.powerDraw = powerDraw;
                 this.qtyOwned = qtyOwned;
-                this.qtyAvail = qtyAvail;
                 this.serviceTickets = serviceTickets;
                 this.notes = notes;
+                this.key = key;
         }
 
-        break(qty: number, reason: string, notes: string) {
-                //decrease quantityavail, store reason/notes/qty in Service Ticket member var object. Member var should be array of service tickets, append new one
-        }
-
-        fix(ticketNum: number) {
-                //delete service ticket at index
+        deleteServiceTicket = (ticket: ServiceTicket) => {
+                const ticketIndex = this.serviceTickets.indexOf(ticket);
+                this.serviceTickets.splice(ticketIndex, 1);
+                set(ref(rtdb, 'GearContainer/' + this.key + '/serviceTickets'), this.serviceTickets);
         }
 }

@@ -1,70 +1,114 @@
 import React, { useState } from 'react';
-import { View, FlatList, Text, TouchableOpacity, Animated, useAnimatedValue, StyleSheet } from 'react-native';
-import Gear from '../utils/Gear';
-import { COLORS } from '../globals';
+import { View, FlatList, Text, TouchableOpacity, Animated, useAnimatedValue, StyleSheet, ListRenderItem } from 'react-native';
 
-const GearCard = ({ item }: {item: Gear}) => {
-  var numDamaged = 0; //determine if card contains damaged gear
-  for (const ticket of item.serviceTickets) {
+import Gear from '../utils/Gear';
+import ServiceTicket from '../utils/ServiceTicket';
+
+import { COLORS } from '../globals';
+import Ionicons from '@expo/vector-icons/Ionicons';
+
+const GearCard = ({ gearItem }: {gearItem: Gear}) => {
+  const [ticketView, setTicketView] = useState(false);
+  var numDamaged = 0;
+  for (const ticket of gearItem.serviceTickets) {
     numDamaged += ticket.qty;
   }
+  
+
+  const TicketItem = (ticketItem: ServiceTicket, gearItem: Gear) => (
+    <View style={styles.ticketItem}>
+      <View style={{...styles.gearCardBubble, backgroundColor: COLORS.RED, margin: 'auto', marginLeft: 5}}>
+        <Text style={styles.gearCardBubbleText}>{ticketItem.qty}</Text>
+      </View>
+      <View style={styles.ticketItemNotes}>
+        <Text style={styles.gearCardBubbleText}>{ticketItem.notes}</Text>
+      </View>
+      <TouchableOpacity style={{margin: 'auto'}} onPress={() => gearItem.deleteServiceTicket(ticketItem)}>
+        <Ionicons name={'checkmark-circle'} color={COLORS.GREEN} size={40}/>
+      </TouchableOpacity>
+    </View>
+  )
+
 
   return (
-    <View style={styles.gearCard}>
-      <View style={styles.gearCardLeftSideWrapper}>
-
-        <View style={styles.gearCardName}>
-          <Text style={{color: COLORS.WHITE}}>{item.name}</Text>
-        </View>
-
-        <View style={styles.gearCardQuantityWrapper}>
-          <View style={styles.gearCardBubble}>
-            <Text style={styles.gearCardBubbleText}>{item.qtyAvail}</Text>
-          </View>
-          {numDamaged > 0 &&
-            <TouchableOpacity onPress={() => {}}>
-              <View style={{...styles.gearCardBubble, backgroundColor: COLORS.RED}}>
-                <Text style={{...styles.gearCardBubbleText, paddingTop: 1}}>{numDamaged}</Text>
-              </View>
+    <View>
+      {ticketView && gearItem.serviceTickets.length ? 
+        <View style={styles.ticketView}>
+          <View style={styles.ticketName}>
+            <View style={{...styles.gearCardName, backgroundColor: COLORS.RED, marginBottom: 'auto'}}>
+              <Text style={{color: COLORS.WHITE}}>{gearItem.name}</Text>
+            </View>
+            <TouchableOpacity  onPress={() => setTicketView(false)}>
+              <Ionicons name={'close-outline'} color={COLORS.LIGHT_GRAY} size={40}/>
             </TouchableOpacity>
-          }
-        </View>
-
-        {item.includes &&
-          <View style={styles.gearCardIncludes}>
-            <Text style={{color: COLORS.WHITE}}>Includes</Text>
-            <View style={styles.separatorBar}></View>
-            <FlatList
-              data={item.includes}
-              renderItem={({item}: {item: string}) => {return (<Text style={{color: COLORS.WHITE}}>•{item}</Text>)}}
-              keyExtractor={(includeItem) => (includeItem)}
-            />
           </View>
-        }
 
-      </View>
-
-      <View style={styles.gearCardRightSideWrapper}>
-
-        <View style={styles.gearCardBubble}>
-          <Text style={styles.gearCardBubbleText}>{item.powerDraw}W</Text>
-        </View>
-        <View style={{...styles.gearCardBubble, height: 40}}>
-          <Text style={styles.gearCardBubbleText}>COST{'\n'}${item.avgPurchaseCost}</Text>
-        </View>
-        <View style={{...styles.gearCardBubble, height: 40}}>
-          <Text style={styles.gearCardBubbleText}>RENT{'\n'}${item.rentalCost}</Text>
+          <FlatList
+            data={gearItem.serviceTickets}
+            renderItem={(item) => TicketItem(item.item, gearItem)}
+            keyExtractor={(ticket) => (ticket.notes)}
+          />
         </View>
 
-        {item.notes &&
-          <View style={styles.gearCardNotes}>
-            <Text style={{color: COLORS.WHITE}}>NOTES</Text>
-            <View style={styles.separatorBar}></View>
-            <Text style={{color: COLORS.WHITE}}>{item.notes}</Text>
+      :
+
+        <View style={styles.gearCard}>
+          <View style={styles.gearCardLeftSideWrapper}>
+
+            <View style={styles.gearCardName}>
+              <Text style={{color: COLORS.WHITE}}>{gearItem.name}</Text>
+            </View>
+
+            <View style={styles.gearCardQuantityWrapper}>
+              <View style={styles.gearCardBubble}>
+                <Text style={styles.gearCardBubbleText}>{gearItem.qtyOwned}</Text>
+              </View>
+              {numDamaged > 0 &&
+                <TouchableOpacity onPress={() => {setTicketView(true)}}>
+                  <View style={{...styles.gearCardBubble, backgroundColor: COLORS.RED}}>
+                    <Text style={{...styles.gearCardBubbleText, paddingTop: 1}}>{numDamaged}</Text>
+                  </View>
+                </TouchableOpacity>
+              }
+            </View>
+
+            {gearItem.includes &&
+              <View style={styles.gearCardIncludes}>
+                <Text style={{color: COLORS.WHITE}}>Includes</Text>
+                <View style={styles.separatorBar}></View>
+                <FlatList
+                  data={gearItem.includes}
+                  renderItem={({item}: {item: string}) => {return (<Text style={{color: COLORS.WHITE}}>•{item}</Text>)}}
+                  keyExtractor={(includeItem) => (includeItem)}
+                />
+              </View>
+            }
+
           </View>
-        }
 
-      </View>
+          <View style={styles.gearCardRightSideWrapper}>
+
+            <View style={styles.gearCardBubble}>
+              <Text style={styles.gearCardBubbleText}>{gearItem.powerDraw}W</Text>
+            </View>
+            <View style={{...styles.gearCardBubble, height: 40}}>
+              <Text style={styles.gearCardBubbleText}>COST{'\n'}${gearItem.avgPurchaseCost}</Text>
+            </View>
+            <View style={{...styles.gearCardBubble, height: 40}}>
+              <Text style={styles.gearCardBubbleText}>RENT{'\n'}${gearItem.rentalCost}</Text>
+            </View>
+
+            {gearItem.notes &&
+              <View style={styles.gearCardNotes}>
+                <Text style={{color: COLORS.WHITE}}>NOTES</Text>
+                <View style={styles.separatorBar}></View>
+                <Text style={{color: COLORS.WHITE}}>{gearItem.notes}</Text>
+              </View>
+            }
+
+          </View>
+        </View>
+      }
     </View>
   )
 }
@@ -97,12 +141,12 @@ const GearExpandable = ({data, name}: {data: Gear[], name: string}) => {
         <Text style={styles.headerText}>{name}</Text>
       </TouchableOpacity>
 
-      {expanded && 
-        <Animated.View style={{transformOrigin: 'top', transform: [{scaleY: listScaleAnim}]}}>
+      {expanded &&
+        <Animated.View style={{paddingBottom: 30, transformOrigin: 'top', transform: [{scaleY: listScaleAnim}]}}>
           <FlatList
             data={data}
-            renderItem={GearCard}
-            keyExtractor={(gearItem) => (gearItem.name)}
+            renderItem={(item) => <GearCard gearItem={item.item}/>}
+            keyExtractor={(gearItem) => (gearItem.key)}
           />
         </Animated.View>
       }
@@ -192,6 +236,35 @@ const styles = StyleSheet.create({
 
   gearCardQuantityWrapper: {
     flexDirection: 'row'
+  },
+
+  ticketView: {
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: COLORS.RED,
+    backgroundColor: COLORS.GRAY,
+    margin: 15,
+    marginTop: 0,
+    minHeight: 200
+  },
+
+  ticketName: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'flex-start'
+  },
+
+  ticketItem: {
+    flexDirection: 'row', 
+    alignContent: 'flex-start', 
+    width: 300
+  },
+
+  ticketItemNotes: {
+    backgroundColor: COLORS.RED,
+    borderRadius: 10,
+    margin: 4,
+    padding: 5
   }
 });
 

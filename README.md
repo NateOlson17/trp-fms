@@ -2,7 +2,6 @@
 
 ## GENERAL
 
-!-Cleanup especially in tab layout and cleanup comments
 -Update DB content
 -Set up caching
 -Login via Technician object (add permissions to Technician)
@@ -10,14 +9,14 @@
 
 ## INVENTORY SCREEN
 
--Add sorting/filtering
--Add search
--Make showTickets functional (via modal, display service qty, notes, and edit/fix/exit options)
+!-Add date to service tickets and display on card
+!-Fix ticketView styling
+!-Implement add gear (type to search and add new option as one of the dropdown choices), finish rest of form
+-Add sorting/filtering modal
 -Add search
 -Add damage report button
-!-Implement add gear
--Fix FlatList overflow
--Add edit button on gearCard itself, brings up modal just like showTickets
+-Allow only one expanded at a time
+-Add edit button on gearCard itself, allows typing on fields
 
 ## EVENT SCREEN
 

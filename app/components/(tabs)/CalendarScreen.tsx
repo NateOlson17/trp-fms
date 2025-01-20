@@ -6,39 +6,37 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { COLORS } from '@/app/globals';
 
+const addEvent = () => {
+
+}
+
 const CalendarScreen = () => {
   const [addModalVisible, setAddModalVisible] = useState(false);
     return(
         <View style={styles.screenWrapper}>
           <CalendarList
             horizontal
+            scrollEnabled
             pagingEnabled
             pastScrollRange={12}
             futureScrollRange={12}
-            scrollEnabled
-            showScrollIndicator={false}
             theme={{
-              backgroundColor: COLORS.BLACK,
               calendarBackground: COLORS.BLACK, 
               textSectionTitleColor: COLORS.GOLD,
-              selectedDayBackgroundColor: 'transparent',
-              selectedDayTextColor: COLORS.GOLD,
-              todayTextColor: COLORS.WHITE,
-              todayBackgroundColor: COLORS.WEAK_BROWN,
-              dayTextColor: COLORS.GRAY,
+              dayTextColor: COLORS.WHITE,
+              todayTextColor: COLORS.GOLD,
               dotColor: COLORS.GOLD,
-              selectedDotColor: COLORS.GOLD,
-              monthTextColor: COLORS.GOLD,
+              monthTextColor: COLORS.GOLD
             }}
           />
 
           <Modal animationType="fade" transparent={true} visible={addModalVisible} onRequestClose={() => setAddModalVisible(false)}>
             <View style={styles.addModal}>
               <View style={styles.addModalExitButtons}>
-                <TouchableOpacity onPress={() => {setAddModalVisible(false)}}>
+                <TouchableOpacity onPress={() => setAddModalVisible(false)}>
                   <Ionicons name={'close-circle'} color={COLORS.RED} size={70}/>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => {setAddModalVisible(false)}}>
+                <TouchableOpacity onPress={() => {setAddModalVisible(false); addEvent()}}>
                   <Ionicons name={'checkmark-circle'} color={COLORS.GREEN} size={70}/>
                 </TouchableOpacity>
               </View>
@@ -70,9 +68,8 @@ const styles = StyleSheet.create({
     borderColor: COLORS.GOLD,
     borderWidth: 3,
     borderRadius: 20,
+    margin: 20,
     marginTop: 60,
-    marginLeft: 20,
-    marginRight: 20,
     marginBottom: 170,
     flex: 1
   },
