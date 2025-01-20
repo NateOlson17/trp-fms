@@ -2,6 +2,7 @@
 
 ## GENERAL
 
+!-General cleanup
 -Update DB content
 -Set up caching
 -Login via Technician object (add permissions to Technician)
@@ -9,14 +10,12 @@
 
 ## INVENTORY SCREEN
 
-!-Add date to service tickets and display on card
 !-Fix ticketView styling
-!-Implement add gear (type to search and add new option as one of the dropdown choices), finish rest of form
--Add sorting/filtering modal
--Add search
--Add damage report button
--Allow only one expanded at a time
+!-Only allow one dropdown to be expanded at a time on modals and only one GearExpandable expanded at a time
+!-Implement add gear (type to search and add new option as one of the dropdown choices)
 -Add edit button on gearCard itself, allows typing on fields
+-Add sorting/filtering modal
+-Add search modal
 
 ## EVENT SCREEN
 

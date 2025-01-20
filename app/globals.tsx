@@ -8,3 +8,8 @@ export enum COLORS {
     GREEN = '#447053',
     LIGHT_GRAY = '#808381'
 }
+
+export const getCurrentDate = () => {
+    const date = new Date();
+    return (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getFullYear().toString().slice(2)
+}

@@ -21,14 +21,18 @@ const GearCard = ({ gearItem }: {gearItem: Gear}) => {
         <Text style={styles.gearCardBubbleText}>{ticketItem.qty}</Text>
       </View>
       <View style={styles.ticketItemNotes}>
-        <Text style={styles.gearCardBubbleText}>{ticketItem.notes}</Text>
+        <Text style={styles.gearCardBubbleText}>{ticketItem.date}</Text>
       </View>
-      <TouchableOpacity style={{margin: 'auto'}} onPress={() => gearItem.deleteServiceTicket(ticketItem)}>
+      {ticketItem.notes &&
+        <View style={styles.ticketItemNotes}>
+          <Text style={styles.gearCardBubbleText}>{ticketItem.notes}</Text>
+        </View>
+      }
+      <TouchableOpacity style={{margin: 'auto'}} onPress={() => gearItem.deleteTicket(ticketItem)}>
         <Ionicons name={'checkmark-circle'} color={COLORS.GREEN} size={40}/>
       </TouchableOpacity>
     </View>
   )
-
 
   return (
     <View>
@@ -114,6 +118,7 @@ const GearCard = ({ gearItem }: {gearItem: Gear}) => {
 }
 
 
+
 const GearExpandable = ({data, name}: {data: Gear[], name: string}) => {
   const [expanded, setExpanded] = useState(false);
   const listScaleAnim = useAnimatedValue(0);
@@ -153,6 +158,7 @@ const GearExpandable = ({data, name}: {data: Gear[], name: string}) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   headerView: {

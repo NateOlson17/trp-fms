@@ -44,9 +44,14 @@ export default class Gear {
                 this.key = key;
         }
 
-        deleteServiceTicket = (ticket: ServiceTicket) => {
+        deleteTicket = (ticket: ServiceTicket) => {
                 const ticketIndex = this.serviceTickets.indexOf(ticket);
                 this.serviceTickets.splice(ticketIndex, 1);
+                set(ref(rtdb, 'GearContainer/' + this.key + '/serviceTickets'), this.serviceTickets);
+        }
+
+        addTicket = (ticket: ServiceTicket) => {
+                this.serviceTickets.push(ticket);
                 set(ref(rtdb, 'GearContainer/' + this.key + '/serviceTickets'), this.serviceTickets);
         }
 }

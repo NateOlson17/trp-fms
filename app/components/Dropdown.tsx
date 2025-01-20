@@ -1,22 +1,23 @@
 import { useState } from "react";
-import { View, StyleSheet, DimensionValue, Text, TouchableOpacity, FlatList } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, FlatList, ViewStyle } from "react-native";
 
 import { COLORS } from "../globals";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 
-const Dropdown = ({data, onSelect, placeholderText, isDisabled}: {
+const Dropdown = ({data, onSelect, placeholderText, isDisabled, style}: {
   data: {key: string, value: any}[], 
   onSelect: (item: {key: string, value: any}) => void,
   placeholderText?: string,
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  style?: ViewStyle;
 }) => {
   const [currentSelection, setCurrentSelection] = useState({key: placeholderText ? placeholderText : '', value: null});
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <View style={{maxHeight: 200}}>
+    <View style={{...style, maxHeight: 200}}>
       <TouchableOpacity onPress={() => {isDisabled ? null : setExpanded(!expanded)}}>
         <View style={{...styles.textBox, borderColor: isDisabled ? COLORS.LIGHT_GRAY : COLORS.GOLD}}>
           <Text style={{...styles.selectedText, color: isDisabled ? COLORS.LIGHT_GRAY : COLORS.WHITE}}>{currentSelection.key}</Text>
@@ -57,7 +58,8 @@ const styles = StyleSheet.create({
 
     selectedText: {
       fontWeight: 'bold',
-      alignSelf: 'center'
+      alignSelf: 'center',
+      width: 120
     },
 
     listSeparator: {
@@ -72,7 +74,10 @@ const styles = StyleSheet.create({
       backgroundColor: COLORS.BLACK,
       width: 160,
       borderColor: COLORS.WEAK_BROWN,
-      borderWidth: 2
+      borderWidth: 2,
+      position: 'absolute',
+      zIndex: 1,
+      marginTop: 40
     },
 
     listItem: {
