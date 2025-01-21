@@ -4,7 +4,7 @@ import { CalendarList } from 'react-native-calendars';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-import { COLORS } from '@/app/globals';
+import globalStyles, { COLORS } from '@/app/globals';
 
 const addEvent = () => {
 
@@ -13,7 +13,7 @@ const addEvent = () => {
 const CalendarScreen = () => {
   const [addModalVisible, setAddModalVisible] = useState(false);
     return(
-        <View style={styles.screenWrapper}>
+        <View style={globalStyles.screenWrapper}>
           <CalendarList
             horizontal
             scrollEnabled
@@ -51,13 +51,7 @@ const CalendarScreen = () => {
 }
 
 const styles = StyleSheet.create({
-  screenWrapper: {
-    paddingTop: 50, 
-    backgroundColor: COLORS.BLACK, 
-    flex: 1
-  },
-
-  addButton: {
+   addButton: {
     alignSelf: 'center', 
     marginTop: 'auto', 
     marginBottom: 20

@@ -44,7 +44,7 @@ export default function TabLayout() {
               g.rentalCost,
               g.powerDraw,
               g.qtyOwned,
-              g.serviceTickets? g.serviceTickets as ServiceTicket[] : [],
+              (g.serviceTickets || []) as ServiceTicket[],
               g.notes,
               container.key + '/' + gearItem.key
             )) //get key of current category object and push to corresponding gear array a new Gear object with data from current item
@@ -65,7 +65,7 @@ export default function TabLayout() {
         var tempTechs: Technician[] = [];
         snapshot.forEach(tech => {
           let t = tech.val();
-          tempTechs.push({...t, key: tech.key} as Technician); //create new Technician with DB data
+          tempTechs.push(new Technician(t.name, t.contact, t.role, tech.key)); //create new Technician with DB data
         });
         setTechs(tempTechs);
       } else {
@@ -90,18 +90,18 @@ export default function TabLayout() {
             e.endDate,
             e.quotePrice,
             e.invoicePrice,
-            e.gear ? e.gear as Gear[] : [],
-            e.techs ? e.techs as Technician[]: [],
-            e.techRates ? e.techRates : [],
-            e.techsPaid ? e.techsPaid : [],
+            (e.gear || []) as Gear[],
+            (e.techs || []) as Technician[],
+            e.techRates || [],
+            e.techsPaid || [],
             e.dateQuoted,
             e.dateConfirmed,
             e.dateInvoiced,
             e.datePaid,
-            e.subrentals ? e.subrentals : [],
-            e.subrentalAmounts ? e.subRentalAmounts : [],
-            e.otherCosts ? e.otherCosts : [],
-            e.otherCostsAmount ? e.otherCosts : [],
+            e.subrentals || [],
+            e.subrentalAmounts || [],
+            e.otherCosts || [],
+            e.otherCostsAmount || [],
             e.outbounded,
             e.outboundNotes,
             e.inbounded,

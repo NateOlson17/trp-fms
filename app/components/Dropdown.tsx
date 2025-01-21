@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View, StyleSheet, Text, TouchableOpacity, FlatList, ViewStyle } from "react-native";
 
 import { COLORS } from "../globals";
@@ -6,31 +6,54 @@ import { COLORS } from "../globals";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 
-const Dropdown = ({data, onSelect, placeholderText, isDisabled, style}: {
+type DropdownProps = {
   data: {key: string, value: any}[], 
-  onSelect: (item: {key: string, value: any}) => void,
-  placeholderText?: string,
-  isDisabled?: boolean,
+  onSelect: (item: {key: string, value: any}) => void;
+  placeholderText?: string;
+  isDisabled?: boolean;
   style?: ViewStyle;
-}) => {
-  const [currentSelection, setCurrentSelection] = useState({key: placeholderText ? placeholderText : '', value: null});
+  expandLogic: false;
+}
+
+type DropdownPropsWithExpand = {
+  data: {key: string, value: any}[];
+  onSelect: (item: {key: string, value: any}) => void;
+  placeholderText?: string;
+  isDisabled?: boolean;
+  style?: ViewStyle;
+  expandLogic: true;
+  name: string;
+  onExpand: (name: string) => void;
+  currentExpanded: string;
+}
+
+const Dropdown = (props: DropdownProps | DropdownPropsWithExpand) => {
+  const [currentSelection, setCurrentSelection] = useState({key: props.placeholderText || '', value: null});
   const [expanded, setExpanded] = useState(false);
 
+  // useEffect(()=>{
+  //   console.log('current data for ' + props.placeholderText + ': \n');
+  //   console.log(props.data);
+  //   setCurrentSelection({key: props.placeholderText || '', value: null});
+  // },  [props.data]);
+
+  if (props.expandLogic && expanded && props.currentExpanded && props.currentExpanded != props.name) setExpanded(false);
+
   return (
-    <View style={{...style, maxHeight: 200}}>
-      <TouchableOpacity onPress={() => {isDisabled ? null : setExpanded(!expanded)}}>
-        <View style={{...styles.textBox, borderColor: isDisabled ? COLORS.LIGHT_GRAY : COLORS.GOLD}}>
-          <Text style={{...styles.selectedText, color: isDisabled ? COLORS.LIGHT_GRAY : COLORS.WHITE}}>{currentSelection.key}</Text>
-          <Ionicons name={expanded ? 'caret-up-outline' : 'caret-down-outline'} color={isDisabled ? COLORS.LIGHT_GRAY : COLORS.GOLD} size={30} style={{marginLeft: 'auto'}}/>
+    <View style={{...props.style, maxHeight: 200}}>
+      <TouchableOpacity onPress={() => {props.isDisabled ? null : setExpanded(!expanded); if (props.expandLogic) props.onExpand(props.name)}}>
+        <View style={{...styles.textBox, borderColor: props.isDisabled ? COLORS.LIGHT_GRAY : COLORS.GOLD}}>
+          <Text style={{...styles.selectedText, color: props.isDisabled ? COLORS.LIGHT_GRAY : COLORS.WHITE}}>{currentSelection.key}</Text>
+          <Ionicons name={expanded ? 'caret-up-outline' : 'caret-down-outline'} color={props.isDisabled ? COLORS.LIGHT_GRAY : COLORS.GOLD} size={30} style={{marginLeft: 'auto'}}/>
         </View>
       </TouchableOpacity>  
 
       {expanded && 
         <View style={styles.listContainer}>
           <FlatList
-            data={data}
+            data={props.data}
             renderItem={item => (
-              <TouchableOpacity onPress={() => {setCurrentSelection(item.item); setExpanded(false); onSelect(item.item)}}>
+              <TouchableOpacity onPress={() => {setCurrentSelection(item.item); setExpanded(false); props.onSelect(item.item)}}>
                 <View style={styles.listItem}>
                   <Text style={{color: COLORS.WHITE}}>{item.item.key}</Text>
                 </View>
