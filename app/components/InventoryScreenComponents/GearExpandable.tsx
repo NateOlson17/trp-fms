@@ -45,7 +45,7 @@ const GearExpandable = ({data, name, currentExpanded, onExpand}: {data: Gear[], 
           <FlatList
             data={data}
             renderItem={(item) => <GearCard gearItem={item.item}/>}
-            keyExtractor={(gearItem) => (gearItem.key)}
+            keyExtractor={gearItem => gearItem.key}
           />
         </Animated.View>
       }

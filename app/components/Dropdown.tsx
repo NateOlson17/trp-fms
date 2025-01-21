@@ -60,7 +60,7 @@ const Dropdown = (props: DropdownProps | DropdownPropsWithExpand) => {
               </TouchableOpacity>
             )}
             ItemSeparatorComponent={() => (<View style={styles.listSeparator}/>)}
-            keyExtractor={(listItem) => (listItem.key)}
+            keyExtractor={listItem => listItem.key}
           />
         </View>
       } 

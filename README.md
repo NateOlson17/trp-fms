@@ -3,6 +3,7 @@
 ## GENERAL
 
 !-General cleanup (comments, consistent style)
+-Improve FlatList performance (https://reactnative.dev/docs/optimizing-flatlist-configuration)
 -Update DB content
 -Set up caching
 -Login via Technician object (add permissions to Technician)
@@ -10,8 +11,6 @@
 
 ## INVENTORY SCREEN
 
-!-Fix ticketView styling
-!-Service tickets can have same key ''
 !-Reset placeholder text for item if category changes (useEffect triggers even with no change)
 !-Done key only appears on first AddModal call
 -Implement add gear (type to search and add new option as one of the dropdown choices)

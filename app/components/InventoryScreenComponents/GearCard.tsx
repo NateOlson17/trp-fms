@@ -29,7 +29,7 @@ const GearCard = ({ gearItem }: {gearItem: Gear}) => {
           <Text style={styles.cardBubbleText}>{ticketItem.notes}</Text>
         </View>
       }
-      <TouchableOpacity style={{margin: 'auto'}} onPress={() => gearItem.deleteTicket(ticketItem)}>
+      <TouchableOpacity style={{marginBottom: 'auto', marginTop: 'auto'}} onPress={() => gearItem.deleteTicket(ticketItem)}>
         <Ionicons name={'checkmark-circle'} color={COLORS.GREEN} size={40}/>
       </TouchableOpacity>
     </View>
@@ -51,7 +51,7 @@ const GearCard = ({ gearItem }: {gearItem: Gear}) => {
           <FlatList
             data={gearItem.serviceTickets}
             renderItem={(item) => TicketItem(item.item, gearItem)}
-            keyExtractor={(ticket) => (ticket.notes)}
+            keyExtractor={(ticket, index) => index.toString()}
           />
         </View>
 
@@ -84,7 +84,7 @@ const GearCard = ({ gearItem }: {gearItem: Gear}) => {
                 <FlatList
                   data={gearItem.includes}
                   renderItem={({item}: {item: string}) => {return (<Text style={{color: COLORS.WHITE}}>•{item}</Text>)}}
-                  keyExtractor={(includeItem) => (includeItem)}
+                  keyExtractor={includeItem => includeItem}
                 />
               </View>
             }
@@ -195,7 +195,8 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.GRAY,
         margin: 15,
         marginTop: 0,
-        minHeight: 200
+        minHeight: 200,
+        paddingBottom: 10
     },
 
     ticketName: {
@@ -207,7 +208,6 @@ const styles = StyleSheet.create({
     ticketItem: {
         flexDirection: 'row', 
         alignContent: 'flex-start', 
-        justifyContent: 'center',
         width: 300
     },
 
@@ -215,7 +215,10 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.RED,
         borderRadius: 10,
         margin: 4,
-        padding: 5
+        padding: 5,
+        maxWidth: 180,
+        marginTop: 'auto',
+        marginBottom: 'auto'
     }
 });
 

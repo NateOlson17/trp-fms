@@ -39,7 +39,7 @@ const InventoryScreen = () => {
           <Ionicons name={'build-outline'} color={COLORS.GOLD} size={65}/>
         </TouchableOpacity>
       </View>
-      {addModalVisible && <AddGearModal gear={gear} onClose={() => setAddModalVisible(false)} isVisible={addModalVisible}/>}
+      {/* {addModalVisible && <AddGearModal gear={gear} onClose={() => setAddModalVisible(false)} isVisible={addModalVisible}/>} */}
       {ticketModalVisible && <AddTicketModal gear={gear} onClose={() => setTicketModalVisible(false)}/>}
     </View>
   );

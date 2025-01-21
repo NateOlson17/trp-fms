@@ -86,7 +86,7 @@ const AddTicketModal = ({gear, onClose}: {gear: GearContainer, onClose: () => vo
           <TouchableOpacity onPress={() => {onClose(); setNewGearContainer('')}}>
             <Ionicons name={'close-circle'} color={COLORS.RED} size={70}/>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {if (newTicket.qty > 0 && newGear) newGear.addTicket(newTicket); onClose();}}>
+          <TouchableOpacity onPress={() => {if (newGear && newTicket.qty > 0 && newTicket.qty <= newGear.qtyOwned) newGear.addTicket(newTicket); onClose();}}>
             <Ionicons name={'checkmark-circle'} color={COLORS.GREEN} size={70}/>
           </TouchableOpacity>
         </View>
