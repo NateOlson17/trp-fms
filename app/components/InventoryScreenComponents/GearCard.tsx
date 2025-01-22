@@ -1,39 +1,38 @@
 import { useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 
+import Ionicons from '@expo/vector-icons/Ionicons';
+
 import ServiceTicket from '../../utils/ServiceTicket';
 import Gear from '../../utils/Gear';
-
-import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { COLORS } from '../../globals';
 
 
+const TicketItem = (ticketItem: ServiceTicket, gearItem: Gear) => (
+  <View style={styles.ticketItem}>
+    <View style={styles.ticketItemField}>
+      <Text style={styles.cardBubbleText}>{ticketItem.date}</Text>
+    </View>
+    <View style={{...styles.cardBubble, backgroundColor: COLORS.RED, marginLeft: 5, marginTop: 'auto', marginBottom: 'auto'}}>
+      <Text style={styles.cardBubbleText}>{ticketItem.qty}</Text>
+    </View>
+    {ticketItem.notes &&
+      <View style={styles.ticketItemField}>
+        <Text style={styles.cardBubbleText}>{ticketItem.notes}</Text>
+      </View>
+    }
+    <TouchableOpacity style={{marginBottom: 'auto', marginTop: 'auto'}} onPress={() => gearItem.deleteTicket(ticketItem)}>
+      <Ionicons name={'checkmark-circle'} color={COLORS.GREEN} size={35}/>
+    </TouchableOpacity>
+  </View>
+)
+
+
 const GearCard = ({ gearItem }: {gearItem: Gear}) => {
   const [ticketView, setTicketView] = useState(false);
-  var numDamaged = 0;
-  for (const ticket of gearItem.serviceTickets) {
-    numDamaged += ticket.qty;
-  }
-  
-  const TicketItem = (ticketItem: ServiceTicket, gearItem: Gear) => (
-    <View style={styles.ticketItem}>
-      <View style={{...styles.cardBubble, backgroundColor: COLORS.RED, marginLeft: 5, marginTop: 'auto', marginBottom: 'auto'}}>
-        <Text style={styles.cardBubbleText}>{ticketItem.qty}</Text>
-      </View>
-      <View style={styles.ticketItemField}>
-        <Text style={styles.cardBubbleText}>{ticketItem.date}</Text>
-      </View>
-      {ticketItem.notes &&
-        <View style={styles.ticketItemField}>
-          <Text style={styles.cardBubbleText}>{ticketItem.notes}</Text>
-        </View>
-      }
-      <TouchableOpacity style={{marginBottom: 'auto', marginTop: 'auto'}} onPress={() => gearItem.deleteTicket(ticketItem)}>
-        <Ionicons name={'checkmark-circle'} color={COLORS.GREEN} size={40}/>
-      </TouchableOpacity>
-    </View>
-  )
+
+  const numDamaged = gearItem.serviceTickets.reduce((total, {qty}) => total + qty, 0);
 
   return (
     <View>
@@ -43,8 +42,8 @@ const GearCard = ({ gearItem }: {gearItem: Gear}) => {
             <View style={{...styles.cardName, backgroundColor: COLORS.RED, marginBottom: 'auto'}}>
               <Text style={{color: COLORS.WHITE}}>{gearItem.name}</Text>
             </View>
-            <TouchableOpacity  onPress={() => setTicketView(false)}>
-              <Ionicons name={'close-outline'} color={COLORS.LIGHT_GRAY} size={40}/>
+            <TouchableOpacity  onPress={() => setTicketView(false)} style={{marginRight: 4, marginTop: 3}}>
+              <Ionicons name={'arrow-undo-outline'} color={COLORS.LIGHT_GRAY} size={40}/>
             </TouchableOpacity>
           </View>
 
@@ -59,9 +58,13 @@ const GearCard = ({ gearItem }: {gearItem: Gear}) => {
 
         <View style={styles.card}>
           <View style={styles.cardLeftSideWrapper}>
-
-            <View style={styles.cardName}>
-              <Text style={{color: COLORS.WHITE}}>{gearItem.name}</Text>
+            <View style={{flexDirection: 'row'}}>
+              <View style={styles.cardName}>
+                <Text style={{color: COLORS.WHITE}}>{gearItem.name}</Text>
+              </View>
+              <TouchableOpacity style={{alignSelf: 'center', marginLeft: 5}} onPress={() => {}}>
+                <Ionicons name={'create-outline'} color={COLORS.GOLD} size={30}/>
+              </TouchableOpacity>
             </View>
 
             <View style={styles.cardQuantityWrapper}>
@@ -69,9 +72,9 @@ const GearCard = ({ gearItem }: {gearItem: Gear}) => {
                 <Text style={styles.cardBubbleText}>{gearItem.qtyOwned}</Text>
               </View>
               {numDamaged > 0 &&
-                <TouchableOpacity onPress={() => {setTicketView(true)}}>
+                <TouchableOpacity onPress={() => setTicketView(true)}>
                   <View style={{...styles.cardBubble, backgroundColor: COLORS.RED}}>
-                    <Text style={{...styles.cardBubbleText, paddingTop: 1}}>{numDamaged}</Text>
+                    <Text style={styles.cardBubbleText}>{numDamaged}</Text>
                   </View>
                 </TouchableOpacity>
               }
@@ -79,20 +82,18 @@ const GearCard = ({ gearItem }: {gearItem: Gear}) => {
 
             {gearItem.includes &&
               <View style={styles.cardIncludes}>
-                <Text style={{color: COLORS.WHITE}}>Includes</Text>
+                <Text style={{color: COLORS.WHITE}}>INCLUDES</Text>
                 <View style={styles.separatorBar}></View>
                 <FlatList
                   data={gearItem.includes}
-                  renderItem={({item}: {item: string}) => {return (<Text style={{color: COLORS.WHITE}}>•{item}</Text>)}}
+                  renderItem={({item}: {item: string}) => <Text style={{color: COLORS.WHITE}}>• {item}</Text>}
                   keyExtractor={includeItem => includeItem}
                 />
               </View>
             }
-
           </View>
 
           <View style={styles.cardRightSideWrapper}>
-
             <View style={styles.cardBubble}>
               <Text style={styles.cardBubbleText}>{gearItem.powerDraw}W</Text>
             </View>
@@ -110,7 +111,6 @@ const GearCard = ({ gearItem }: {gearItem: Gear}) => {
                 <Text style={{color: COLORS.WHITE}}>{gearItem.notes}</Text>
               </View>
             }
-
           </View>
         </View>
       }
@@ -141,7 +141,8 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.GOLD,
         width: 190,
         paddingBottom: 6,
-        paddingTop: 6
+        paddingTop: 6,
+        paddingLeft: 4
     },
 
     cardBubble: {
@@ -202,7 +203,8 @@ const styles = StyleSheet.create({
     ticketName: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignContent: 'flex-start'
+        alignContent: 'flex-start',
+        marginBottom: 4
     },
 
     ticketItem: {
@@ -216,7 +218,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         margin: 4,
         padding: 5,
-        maxWidth: 180,
+        maxWidth: 170,
         marginTop: 'auto',
         marginBottom: 'auto'
     }

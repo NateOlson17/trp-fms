@@ -4,15 +4,15 @@ export default class Technician {
     role: string;
     key: string;
 
-    constructor(
+    constructor(args: {
         name: string, 
         contact: string, 
         role: string,
         key: string
-    ) {
-        this.name = name;
-        this.contact = contact;
-        this.role = role;
-        this.key = key;
+    }) {
+        this.name = args.name;
+        this.contact = args.contact;
+        this.role = args.role;
+        this.key = args.key;
     }
 }

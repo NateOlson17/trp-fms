@@ -3,13 +3,13 @@ export default class ServiceTicket {
     date: string;
     notes: string;
 
-    constructor(
+    constructor(args: {
         qty: number,
         date: string,
         notes: string,
-    ) {
-        this.qty = qty;
-        this.date = date;
-        this.notes = notes;    
+    }) {
+        this.qty = args.qty;
+        this.date = args.date;
+        this.notes = args.notes;    
     }
 }

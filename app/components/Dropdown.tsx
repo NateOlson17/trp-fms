@@ -37,11 +37,11 @@ const Dropdown = (props: DropdownProps | DropdownPropsWithExpand) => {
   //   setCurrentSelection({key: props.placeholderText || '', value: null});
   // },  [props.data]);
 
-  if (props.expandLogic && expanded && props.currentExpanded && props.currentExpanded != props.name) setExpanded(false);
+  if (props.expandLogic && expanded && props.currentExpanded != props.name) setExpanded(false);
 
   return (
     <View style={{...props.style, maxHeight: 200}}>
-      <TouchableOpacity onPress={() => {props.isDisabled ? null : setExpanded(!expanded); if (props.expandLogic) props.onExpand(props.name)}}>
+      <TouchableOpacity onPress={() => {if (!props.isDisabled) {setExpanded(!expanded); if (props.expandLogic) props.onExpand(props.name)}}}>
         <View style={{...styles.textBox, borderColor: props.isDisabled ? COLORS.LIGHT_GRAY : COLORS.GOLD}}>
           <Text style={{...styles.selectedText, color: props.isDisabled ? COLORS.LIGHT_GRAY : COLORS.WHITE}}>{currentSelection.key}</Text>
           <Ionicons name={expanded ? 'caret-up-outline' : 'caret-down-outline'} color={props.isDisabled ? COLORS.LIGHT_GRAY : COLORS.GOLD} size={30} style={{marginLeft: 'auto'}}/>
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
       height: 40,
       flexDirection: 'row',
       padding: 4,
-      width: 160
+      width: 160,
     },
 
     selectedText: {

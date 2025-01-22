@@ -2,27 +2,20 @@ import React, { useState } from 'react';
 import { View, FlatList, Text, TouchableOpacity, Animated, useAnimatedValue, StyleSheet } from 'react-native';
 
 import Gear from '../../utils/Gear';
+import GearCard from './GearCard';
 
 import { COLORS } from '../../globals';
-import GearCard from './GearCard';
 
 
 const GearExpandable = ({data, name, currentExpanded, onExpand}: {data: Gear[], name: string, currentExpanded?: string, onExpand?: (name: string) => void}) => {
   const [expanded, setExpanded] = useState(false);
+
   const listScaleAnim = useAnimatedValue(0);
 
-  var containsDamaged = false; //determine if expandable contains damaged gear
-  for (const gear of data) {
-    if (gear.serviceTickets.length) {
-      containsDamaged = true;
-      break;
-    }
-  };
+  var containsDamaged = false;
+  for (const gear of data) {if (gear.serviceTickets.length) {containsDamaged = true; break;}}
 
-  if (expanded && currentExpanded && currentExpanded != name) {
-    setExpanded(false);
-    listScaleAnim.setValue(0)
-  }
+  if (expanded && currentExpanded && currentExpanded != name) {setExpanded(false); listScaleAnim.setValue(0)} //force collapse if another GearExpandable is expanded
 
   return (
     <View>
@@ -44,7 +37,7 @@ const GearExpandable = ({data, name, currentExpanded, onExpand}: {data: Gear[], 
         <Animated.View style={{paddingBottom: 30, transformOrigin: 'top', transform: [{scaleY: listScaleAnim}]}}>
           <FlatList
             data={data}
-            renderItem={(item) => <GearCard gearItem={item.item}/>}
+            renderItem={item => <GearCard gearItem={item.item}/>}
             keyExtractor={gearItem => gearItem.key}
           />
         </Animated.View>

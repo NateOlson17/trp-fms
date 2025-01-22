@@ -37,7 +37,7 @@ export default class Event {
 
     key: string;
 
-    constructor(
+    constructor(args: {
         name: string,
         location: string,
         client: string,
@@ -49,21 +49,21 @@ export default class Event {
         quotePrice: number,
         invoicePrice: number,
 
-        gear: Gear[],
-        techs: Technician[],
-        techRates: number[],
-        techsPaid: boolean[],
+        gear: Gear[] | undefined,
+        techs: Technician[] | undefined,
+        techRates: number[] | undefined,
+        techsPaid: boolean[] | undefined,
 
         dateQuoted: string,
         dateConfirmed: string,
         dateInvoiced: string,
         datePaid: string,
 
-        subrentals: string[],
-        subrentalAmounts: number[],
+        subrentals: string[] | undefined,
+        subrentalAmounts: number[] | undefined,
 
-        otherCosts: string[],
-        otherCostsAmount: number[],
+        otherCosts: string[] | undefined,
+        otherCostsAmount: number[] | undefined,
                 
         outbounded: boolean,
         outboundNotes: string,
@@ -71,40 +71,40 @@ export default class Event {
         inboundNotes: string,
 
         key: string
-    ) {
-        this.name = name;
-        this.location = location;
-        this.client = client;
-        this.manager = manager;
+    }) {
+        this.name = args.name;
+        this.location = args.location;
+        this.client = args.client;
+        this.manager = new Technician(args.manager);
 
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.startDate = args.startDate;
+        this.endDate = args.endDate;
 
-        this.quotePrice = quotePrice;
-        this.invoicePrice = invoicePrice
+        this.quotePrice = args.quotePrice;
+        this.invoicePrice = args.invoicePrice
 
-        this.gear = gear;
-        this.techs = techs;
-        this.techRates = techRates;
-        this.techsPaid = techsPaid;
+        this.gear = args.gear ? args.gear.map(gearItem => new Gear(gearItem)) : [];
+        this.techs = args.techs ? args.techs.map(tech => new Technician(tech)) : [];
+        this.techRates = args.techRates || [];
+        this.techsPaid = args.techsPaid || [];
 
-        this.dateQuoted = dateQuoted;
-        this.dateConfirmed = dateConfirmed;
-        this.dateInvoiced = dateInvoiced;
-        this.datePaid = datePaid; 
+        this.dateQuoted = args.dateQuoted;
+        this.dateConfirmed = args.dateConfirmed;
+        this.dateInvoiced = args.dateInvoiced;
+        this.datePaid = args.datePaid; 
 
-        this.subrentals = subrentals;
-        this.subrentalAmounts = subrentalAmounts;
+        this.subrentals = args.subrentals || [];
+        this.subrentalAmounts = args.subrentalAmounts || [];
 
-        this.otherCosts = otherCosts;
-        this.otherCostsAmount = otherCostsAmount;
+        this.otherCosts = args.otherCosts || [];
+        this.otherCostsAmount = args.otherCostsAmount || [];
         
-        this.outbounded = outbounded;
-        this.outboundNotes= outboundNotes;
-        this.inbounded = inbounded;
-        this.inboundNotes = inboundNotes;
+        this.outbounded = args.outbounded;
+        this.outboundNotes= args.outboundNotes;
+        this.inbounded = args.inbounded;
+        this.inboundNotes = args.inboundNotes;
 
-        this.key = key;
+        this.key = args.key;
     }
 
 

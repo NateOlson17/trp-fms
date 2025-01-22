@@ -22,26 +22,26 @@ export default class Gear {
         notes: string;
         key: string;
 
-        constructor(
+        constructor(args: {
                 name: string,
                 includes: string[],
                 avgPurchaseCost: number,
                 rentalCost: number,
                 powerDraw: number,
                 qtyOwned: number,
-                serviceTickets: ServiceTicket[],
+                serviceTickets: ServiceTicket[] | undefined,
                 notes: string,
                 key: string
-        ) {
-                this.name = name;
-                this.includes = includes;
-                this.avgPurchaseCost = avgPurchaseCost;
-                this.rentalCost = rentalCost;
-                this.powerDraw = powerDraw;
-                this.qtyOwned = qtyOwned;
-                this.serviceTickets = serviceTickets;
-                this.notes = notes;
-                this.key = key;
+        }) {
+                this.name = args.name;
+                this.includes = args.includes;
+                this.avgPurchaseCost = args.avgPurchaseCost;
+                this.rentalCost = args.rentalCost;
+                this.powerDraw = args.powerDraw;
+                this.qtyOwned = args.qtyOwned;
+                this.serviceTickets = args.serviceTickets ? args.serviceTickets.map(ticket => new ServiceTicket(ticket)) : [];
+                this.notes = args.notes;
+                this.key = args.key;
         }
 
         deleteTicket = (ticket: ServiceTicket) => {

@@ -1,15 +1,15 @@
 import { useContext, useState } from 'react';
-import { Modal, TouchableOpacity, View, StyleSheet} from 'react-native';
-
-import { GearContext } from './_layout';
+import { TouchableOpacity, View, StyleSheet } from 'react-native';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-import globalStyles, { COLORS } from '@/app/globals';
-
 import GearExpandable from '../InventoryScreenComponents/GearExpandable';
 import AddGearModal from '../InventoryScreenComponents/AddGearModal';
-import AddTicketModal from '../InventoryScreenComponents/AddTicketModal'
+import AddTicketModal from '../InventoryScreenComponents/AddTicketModal';
+
+import globalStyles, { COLORS } from '@/app/globals';
+
+import { GearContext } from './_layout';
 
 
 const InventoryScreen = () => {
@@ -20,7 +20,7 @@ const InventoryScreen = () => {
 
   return(
     <View style={globalStyles.screenWrapper}>
-      <View style={{flex: 2.5, maxHeight: 380, paddingBottom: 100, alignContent: 'flex-start'}}>
+      <View style={styles.gearExpandableContainer}>
         <GearExpandable name='INFRASTRUCTURE' currentExpanded={currentExpanded} onExpand={name => setCurrentExpanded(name)} data={gear.infrastructure}/>
         <GearExpandable name='LASER FIXTURES' currentExpanded={currentExpanded} onExpand={name => setCurrentExpanded(name)} data={gear.laserFixtures}/>
         <GearExpandable name='LX FIXTURES' currentExpanded={currentExpanded} onExpand={name => setCurrentExpanded(name)} data={gear.lxFixtures}/>
@@ -59,6 +59,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 'auto',
     justifyContent: 'space-between'
+  },
+
+  gearExpandableContainer: {
+    flex: 2.5, 
+    maxHeight: 380, 
+    paddingBottom: 100, 
+    alignContent: 'flex-start'
   }
 });
 

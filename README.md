@@ -2,19 +2,18 @@
 
 ## GENERAL
 
-!-General cleanup (comments, consistent style)
 -Improve FlatList performance (https://reactnative.dev/docs/optimizing-flatlist-configuration)
 -Update DB content
--Set up caching
 -Login via Technician object (add permissions to Technician)
 -Implement Firebase rules
 
 ## INVENTORY SCREEN
 
 !-Reset placeholder text for item if category changes (useEffect triggers even with no change)
-!-Done key only appears on first AddModal call
--Implement add gear (type to search and add new option as one of the dropdown choices)
--Add edit button on gearCard itself, allows typing on fields
+!-Done key only appears on first AddModal call (selectionColor also resets)
+!-Implement typing to search for Dropdowns, add typed text as new choice
+-Implement add gear
+-Add edit button on gearCard itself, brings up modal
 -Add sorting/filtering modal
 -Add search modal
 

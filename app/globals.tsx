@@ -22,24 +22,21 @@ const globalStyles = StyleSheet.create({
       backgroundColor: COLORS.BLACK, 
       flex: 1
     },
-    
-    modal: {
-        backgroundColor: COLORS.GRAY,
-        borderColor: COLORS.GOLD,
-        borderWidth: 3,
-        borderRadius: 20,
-        margin: 20,
-        marginTop: 60,
-        marginBottom: 170,
-        flex: 1
-      },
-    
-      modalExitButtons: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginTop: 'auto',
-        marginBottom: 20
-      }
+
+    modalField: {
+      backgroundColor: COLORS.BLACK,
+      borderColor: COLORS.GOLD,
+      borderWidth: 2,
+      borderRadius: 5,
+      margin: 10,
+      padding: 8,
+      paddingBottom: 14
+    },
+
+    textInput: {
+      color: COLORS.WHITE,
+      fontWeight: 'bold'
+    }
 });
 
 export default globalStyles;
