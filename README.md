@@ -9,13 +9,12 @@
 
 ## INVENTORY SCREEN
 
-!-Reset placeholder text for item if category changes (useEffect triggers even with no change)
-!-Done key only appears on first AddModal call (selectionColor also resets)
-!-Implement typing to search for Dropdowns, add typed text as new choice
+!-Placeholder text resets even if there is no change in data (because onSelect updates state in Modal component, re-rendering all dropdowns, must fix)
+!-Done key only appears on first AddModal call (selectionColor also resets) - create minimum reproducible example
+-Track qty in each location
 -Implement add gear
--Add edit button on gearCard itself, brings up modal
--Add sorting/filtering modal
--Add search modal
+-Implement edit button on gearCard itself, brings up modal
+-Add search/filter functionality (search brings up small modal with filter button to bring up full modal)
 
 ## EVENT SCREEN
 

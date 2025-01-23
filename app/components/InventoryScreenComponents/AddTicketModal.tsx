@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { TextInput, View } from "react-native";
+import { useState } from 'react';
+import { TextInput, View } from 'react-native';
 
-import ServiceTicket from "../../utils/ServiceTicket";
-import Gear, { GearContainer } from "../../utils/Gear";
-import Dropdown from "../Dropdown";
+import ServiceTicket from '../../utils/ServiceTicket';
+import Gear, { GearContainer } from '../../utils/Gear';
+import Dropdown from '../Dropdown';
 
 import globalStyles, { COLORS, getCurrentDate } from '@/app/globals';
-import GenericModal from "../GenericModal";
+import GenericModal from '../GenericModal';
 
 
 const AddTicketModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void}) => {
@@ -14,6 +14,7 @@ const AddTicketModal = ({gear, onClose}: {gear: GearContainer, onClose: () => vo
   const [newTicket, setNewTicket] = useState(new ServiceTicket({qty: 0, date: getCurrentDate(), notes: ''}));
   const [newGear, setNewGear] = useState({} as Gear)
   const [currentExpanded, setCurrentExpanded] = useState('')
+
 
   return(
     <GenericModal onClose={onClose} onSubmit={() => newGear.addTicket(newTicket)} submitValidated={newGear && newTicket.qty > 0 && newTicket.qty <= newGear.qtyOwned}>
@@ -25,9 +26,10 @@ const AddTicketModal = ({gear, onClose}: {gear: GearContainer, onClose: () => vo
           {key: 'SFX', value: 'sfx'},
           {key: 'SHOW CONTROL', value: 'showControl'}
         ]} 
-        onSelect={(item: {key: string, value: any}) => setNewGearContainer(item.value)}
+        onSelect={(item: {key: string, value: string}) => setNewGearContainer(item.value)}
         placeholderText={'CATEGORY'}
-        style={{margin: 10}}
+        style={{margin: 10, width: 140}}
+        searchEnabled={false}
         expandLogic
         name={'CATEGORY'}
         onExpand={name => setCurrentExpanded(name)}
@@ -38,9 +40,10 @@ const AddTicketModal = ({gear, onClose}: {gear: GearContainer, onClose: () => vo
         <Dropdown
           isDisabled={!newGearContainer}
           data={newGearContainer ? gear[newGearContainer as keyof GearContainer].map(item => ({key: item.name, value: item})) : []} 
-          onSelect={(item: {key: string, value: any}) => setNewGear(item.value)}
+          onSelect={(item: {key: string, value: Gear}) => setNewGear(item.value)}
           placeholderText={'ITEM'}
-          style={{margin: 10}}
+          style={{margin: 10, width: 170}}
+          searchEnabled
           expandLogic
           name={'ITEM'}
           onExpand={name => setCurrentExpanded(name)}

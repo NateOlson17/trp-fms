@@ -36,7 +36,7 @@ export default function TabLayout() {
         var tempGear: GearContainer = {infrastructure: [], laserFixtures: [], lxFixtures: [], sfx: [], showControl: []};
         snapshot.forEach(container => { //for each category object in master container (infrastructure, lxFixtures, etc)
           container.forEach(gearItem => { //for each Gear item in category
-            tempGear[container.key as keyof GearContainer].push(new Gear({...gearItem.val(), key: container.key + '/' + gearItem.key})); //get key of current category and push to corresponding Gear array a new Gear object with data from current item
+            tempGear[container.key as keyof GearContainer].push(new Gear({...gearItem.val(), key: `${container.key}/${gearItem.key}`})); //get key of current category and push to corresponding Gear array a new Gear object with data from current item
             //structure of gear state is now a GearContainer object consisting of arrays for each category. Each array contains Gear objects
           });
         });

@@ -142,7 +142,8 @@ const styles = StyleSheet.create({
         width: 190,
         paddingBottom: 6,
         paddingTop: 6,
-        paddingLeft: 4
+        paddingLeft: 4,
+        paddingRight: 4
     },
 
     cardBubble: {
