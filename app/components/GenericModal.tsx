@@ -3,7 +3,7 @@ import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { COLORS } from "../globals";
+import { COLORS } from "@/app/globals";
 
 
 const GenericModal = (props: PropsWithChildren<{onClose: () => void, onSubmit: () => void, submitValidated: boolean}>) => (

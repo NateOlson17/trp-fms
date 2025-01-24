@@ -3,12 +3,13 @@ import rtdb from '@/app/rtdb_config';
 
 import ServiceTicket from './ServiceTicket';
 
-export interface GearContainer {
+export type GearContainer = {
         infrastructure: Gear[];
         laserFixtures: Gear[];
         lxFixtures: Gear[];
         sfx: Gear[];
         showControl: Gear[];
+        cable: Gear[];
 }
 
 export default class Gear {

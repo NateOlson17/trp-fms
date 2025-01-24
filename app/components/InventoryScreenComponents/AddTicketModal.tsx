@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { TextInput, View } from 'react-native';
 
-import ServiceTicket from '../../utils/ServiceTicket';
-import Gear, { GearContainer } from '../../utils/Gear';
-import Dropdown from '../Dropdown';
+import ServiceTicket from '@/app/utils/ServiceTicket';
+import Gear, { GearContainer } from '@/app/utils/Gear';
+
+import Dropdown from '@/app/components/Dropdown';
 
 import globalStyles, { COLORS, getCurrentDate } from '@/app/globals';
-import GenericModal from '../GenericModal';
+import GenericModal from '@/app/components/GenericModal';
 
 
 const AddTicketModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void}) => {

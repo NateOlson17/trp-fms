@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, FlatList, ViewStyle, TextInput } from 'react-native';
 
-import { COLORS } from '../globals';
+import { COLORS } from '@/app/globals';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -123,7 +123,6 @@ const styles = StyleSheet.create({
     selectedText: {
       color: COLORS.WHITE,
       fontWeight: 'bold',
-      alignSelf: 'center',
       flex: 1
     },
 

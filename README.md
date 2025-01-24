@@ -9,12 +9,13 @@
 
 ## INVENTORY SCREEN
 
-!-Placeholder text resets even if there is no change in data (because onSelect updates state in Modal component, re-rendering all dropdowns, must fix)
-!-Done key only appears on first AddModal call (selectionColor also resets) - create minimum reproducible example
+!-Put typical gold border in global styles
+!-Implement filter functionality
+-Placeholder text resets even if there is no change in data (because onSelect/onExpand updates state in Modal component, re-rendering all dropdowns, must fix)
+-Done key only appears on first AddModal call (selectionColor also resets) - create minimum reproducible example
 -Track qty in each location
 -Implement add gear
 -Implement edit button on gearCard itself, brings up modal
--Add search/filter functionality (search brings up small modal with filter button to bring up full modal)
 
 ## EVENT SCREEN
 

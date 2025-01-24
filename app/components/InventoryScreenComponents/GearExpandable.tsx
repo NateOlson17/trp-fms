@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, FlatList, Text, TouchableOpacity, Animated, useAnimatedValue, StyleSheet } from 'react-native';
 
-import Gear from '../../utils/Gear';
-import GearCard from './GearCard';
+import Gear from '@/app/utils/Gear';
 
-import { COLORS } from '../../globals';
+import GearCard from '@/app/components/InventoryScreenComponents/GearCard';
+
+import { COLORS } from '@/app/globals';
 
 
 const GearExpandable = ({data, name, currentExpanded, onExpand}: {data: Gear[], name: string, currentExpanded?: string, onExpand?: (name: string) => void}) => {
@@ -19,14 +20,12 @@ const GearExpandable = ({data, name, currentExpanded, onExpand}: {data: Gear[], 
 
   return (
     <View>
-      <TouchableOpacity style={{...styles.headerView, borderColor: containsDamaged ? COLORS.RED : COLORS.GOLD}} onPress={() => {
+      <TouchableOpacity style={{...styles.headerView, borderColor: data.length? (containsDamaged ? COLORS.RED : COLORS.GOLD) : COLORS.LIGHT_GRAY}} onPress={() => {
         if (expanded) {
-          listScaleAnim.setValue(1);
           Animated.timing(listScaleAnim, {toValue: 0, duration: 400, useNativeDriver: true}).start(() => setExpanded(false));
         } else {
           setExpanded(true);
           if (onExpand) onExpand(name);
-          listScaleAnim.setValue(0);
           Animated.timing(listScaleAnim, {toValue: 1, duration: 400, useNativeDriver: true}).start();
         }
       }}>
@@ -34,12 +33,18 @@ const GearExpandable = ({data, name, currentExpanded, onExpand}: {data: Gear[], 
       </TouchableOpacity>
 
       {expanded &&
-        <Animated.View style={{paddingBottom: 30, transformOrigin: 'top', transform: [{scaleY: listScaleAnim}]}}>
-          <FlatList
+        <Animated.View style={{...styles.listContainer, transform: [{scaleY: listScaleAnim}]}}>
+          {data.length ? 
+            <FlatList
             data={data}
             renderItem={item => <GearCard gearItem={item.item}/>}
             keyExtractor={gearItem => gearItem.key}
           />
+          :
+          <View style={styles.emptyView}>
+            <Text style={{color: COLORS.WHITE}}>NO MATCHES</Text>
+          </View>
+          }
         </Animated.View>
       }
     </View>
@@ -50,7 +55,6 @@ const GearExpandable = ({data, name, currentExpanded, onExpand}: {data: Gear[], 
 const styles = StyleSheet.create({
   headerView: {
     margin: 4,
-    backgroundColor: COLORS.BLACK,
     borderWidth: 2,
     borderRadius: 10
   },
@@ -60,6 +64,22 @@ const styles = StyleSheet.create({
     margin: 'auto',
     color: COLORS.WHITE,
     fontWeight: 'bold'
+  },
+
+  listContainer: {
+    paddingBottom: 30, 
+    maxHeight: 270, 
+    transformOrigin: 'top', 
+  },
+
+  emptyView: {
+    padding: 5,
+    margin: 10,
+    alignItems: 'center',
+    backgroundColor: COLORS.GRAY,
+    borderColor: COLORS.GOLD,
+    borderWidth: 2,
+    borderRadius: 10
   }
 });
 

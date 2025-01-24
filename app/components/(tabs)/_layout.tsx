@@ -24,7 +24,8 @@ export default function TabLayout() {
     laserFixtures: [],
     lxFixtures: [],
     sfx: [],
-    showControl: []
+    showControl: [],
+    cable: []
   });
   const [events, setEvents] = useState<Event[]>([]);
   const [techs, setTechs] = useState<Technician[]>([]);
@@ -33,7 +34,7 @@ export default function TabLayout() {
     const gearRef = ref(rtdb, 'GearContainer'); //create reference to firebase rtdb at master gear container
     onValue(gearRef, snapshot => {
       if (snapshot.exists()) {
-        var tempGear: GearContainer = {infrastructure: [], laserFixtures: [], lxFixtures: [], sfx: [], showControl: []};
+        var tempGear: GearContainer = {infrastructure: [], laserFixtures: [], lxFixtures: [], sfx: [], showControl: [], cable: []};
         snapshot.forEach(container => { //for each category object in master container (infrastructure, lxFixtures, etc)
           container.forEach(gearItem => { //for each Gear item in category
             tempGear[container.key as keyof GearContainer].push(new Gear({...gearItem.val(), key: `${container.key}/${gearItem.key}`})); //get key of current category and push to corresponding Gear array a new Gear object with data from current item

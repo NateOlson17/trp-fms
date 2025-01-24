@@ -3,10 +3,10 @@ import { FlatList, Text, TouchableOpacity, View, StyleSheet } from 'react-native
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-import ServiceTicket from '../../utils/ServiceTicket';
-import Gear from '../../utils/Gear';
+import ServiceTicket from '@/app/utils/ServiceTicket';
+import Gear from '@/app/utils/Gear';
 
-import { COLORS } from '../../globals';
+import { COLORS } from '@/app/globals';
 
 
 const TicketItem = (ticketItem: ServiceTicket, gearItem: Gear) => (
