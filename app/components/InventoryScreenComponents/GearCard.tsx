@@ -6,7 +6,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import ServiceTicket from '@/app/utils/ServiceTicket';
 import Gear from '@/app/utils/Gear';
 
-import { COLORS } from '@/app/globals';
+import globalStyles, { COLORS } from '@/app/globals';
 
 
 const TicketItem = (ticketItem: ServiceTicket, gearItem: Gear) => (
@@ -119,110 +119,109 @@ const GearCard = ({ gearItem }: {gearItem: Gear}) => {
 }
 
 const styles = StyleSheet.create({
-    separatorBar: {
-        backgroundColor: COLORS.WHITE,
-        height: 2,
-        marginBottom: 4
-    },
+  separatorBar: {
+    backgroundColor: COLORS.WHITE,
+    height: 2,
+    marginBottom: 4
+  },
 
-    card: {
-        borderRadius: 5,
-        borderWidth: 2,
-        borderColor: COLORS.GOLD,
-        backgroundColor: COLORS.GRAY,
-        margin: 15,
-        marginTop: 0,
-        flexDirection: 'row'
-    },
+  card: {
+    ...globalStyles.border,
+    borderRadius: 5,
+    backgroundColor: COLORS.GRAY,
+    margin: 15,
+    marginTop: 0,
+    flexDirection: 'row'
+  },
 
-    cardName: {
-        borderTopLeftRadius: 3,
-        borderBottomRightRadius: 5,
-        backgroundColor: COLORS.GOLD,
-        width: 190,
-        paddingBottom: 6,
-        paddingTop: 6,
-        paddingLeft: 4,
-        paddingRight: 4
-    },
+  cardName: {
+    borderTopLeftRadius: 3,
+    borderBottomRightRadius: 5,
+    backgroundColor: COLORS.GOLD,
+    width: 190,
+    paddingBottom: 6,
+    paddingTop: 6,
+    paddingLeft: 4,
+    paddingRight: 4
+  },
 
-    cardBubble: {
-        backgroundColor: COLORS.GOLD,
-        height: 20,
-        borderRadius: 10,
-        margin: 4
-    },
+  cardBubble: {
+    backgroundColor: COLORS.GOLD,
+    height: 20,
+    borderRadius: 10,
+    margin: 4
+  },
 
-    cardBubbleText: {
-        margin: 'auto', 
-        paddingLeft: 6, 
-        paddingRight: 6, 
-        color: COLORS.WHITE
-    },
+  cardBubbleText: {
+    margin: 'auto', 
+    paddingLeft: 6, 
+    paddingRight: 6, 
+    color: COLORS.WHITE
+  },
 
-    cardIncludes: {
-        backgroundColor: COLORS.GOLD,
-        borderBottomLeftRadius: 3,
-        borderTopRightRadius: 5,
-        alignSelf: 'flex-start',
-        padding: 5,
-        marginTop: 'auto'
-    },
+  cardIncludes: {
+      backgroundColor: COLORS.GOLD,
+      borderBottomLeftRadius: 3,
+      borderTopRightRadius: 5,
+      alignSelf: 'flex-start',
+      padding: 5,
+      marginTop: 'auto'
+  },
 
-    cardNotes: {
-        marginTop: 5,
-        padding: 5,
-        backgroundColor: COLORS.GOLD,
-        borderBottomRightRadius: 3,
-        borderTopLeftRadius: 5
-    },
+  cardNotes: {
+    marginTop: 5,
+    padding: 5,
+    backgroundColor: COLORS.GOLD,
+    borderBottomRightRadius: 3,
+    borderTopLeftRadius: 5
+  },
 
-    cardRightSideWrapper: {
-        alignItems: 'flex-end',
-        flex: 1
-    },
+  cardRightSideWrapper: {
+    alignItems: 'flex-end',
+    flex: 1
+  },
 
-    cardLeftSideWrapper: {
-        alignItems: 'flex-start'
-    },
+  cardLeftSideWrapper: {
+    alignItems: 'flex-start'
+  },
 
-    cardQuantityWrapper: {
-        flexDirection: 'row'
-    },
+  cardQuantityWrapper: {
+    flexDirection: 'row'
+  },
 
-    ticketView: {
-        borderRadius: 5,
-        borderWidth: 2,
-        borderColor: COLORS.RED,
-        backgroundColor: COLORS.GRAY,
-        margin: 15,
-        marginTop: 0,
-        minHeight: 200,
-        paddingBottom: 10
-    },
+  ticketView: {
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: COLORS.RED,
+    backgroundColor: COLORS.GRAY,
+    margin: 15,
+    marginTop: 0,
+    minHeight: 200,
+    paddingBottom: 10
+  },
 
-    ticketName: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignContent: 'flex-start',
-        marginBottom: 4
-    },
+  ticketName: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'flex-start',
+    marginBottom: 4
+  },
 
-    ticketItem: {
-        flexDirection: 'row', 
-        alignContent: 'flex-start', 
-        width: 300
-    },
+  ticketItem: {
+    flexDirection: 'row', 
+    alignContent: 'flex-start', 
+    width: 300
+  },
 
-    ticketItemField: {
-        backgroundColor: COLORS.RED,
-        borderRadius: 10,
-        margin: 4,
-        padding: 5,
-        maxWidth: 170,
-        marginTop: 'auto',
-        marginBottom: 'auto'
-    }
+  ticketItemField: {
+    backgroundColor: COLORS.RED,
+    borderRadius: 10,
+    margin: 4,
+    padding: 5,
+    maxWidth: 170,
+    marginTop: 'auto',
+    marginBottom: 'auto'
+  }
 });
 
 export default GearCard;

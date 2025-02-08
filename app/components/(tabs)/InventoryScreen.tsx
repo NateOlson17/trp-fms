@@ -4,15 +4,52 @@ import { TouchableOpacity, View, StyleSheet, useAnimatedValue, Animated, TextInp
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import Gear from '@/app/utils/Gear';
+import ServiceTicket from '@/app/utils/ServiceTicket';
 
 import GearExpandable from '@/app/components/InventoryScreenComponents/GearExpandable';
 import AddGearModal from '@/app/components/InventoryScreenComponents/AddGearModal';
 import AddTicketModal from '@/app/components/InventoryScreenComponents/AddTicketModal';
-import FilterGearModal, { Filters } from '@/app/components/InventoryScreenComponents/FilterGearModal';
+import FilterGearModal, { getDefaultGearFilters, GearFilters } from '@/app/components/InventoryScreenComponents/FilterGearModal';
 
-import globalStyles, { COLORS } from '@/app/globals';
+import globalStyles, { checkObjEqual, COLORS } from '@/app/globals';
 
 import { GearContext } from '@/app/components/(tabs)/_layout';
+
+const filterGear = (arr: Gear[], filters: GearFilters, defaultFilters: GearFilters, searchText: string) => {
+  // let applied = (prop: keyof GearFilters) => (filters[prop] != defaultFilters[prop]) //determine if prop has been changed from defaultS
+
+  // let numberInRange = (num: number, prop: 'avgPurchaseCost' | 'rentalCost' | 'powerDraw' | 'qtyOwned') => (
+  //   !applied(prop) || (num >= filters[prop].low && num <= filters[prop].high) //determine if filter is unapplied or (applied and value within filter)
+  // )
+
+  // let dateInRange = (dateList: string[]) => ( //determine if filter is unapplied or (applied and value within filter)
+  //   !applied('purchaseDate') || dateList.some(date => (
+  //     Date.parse(date) >= Date.parse(filters.purchaseDate.low) && Date.parse(date) <= Date.parse(filters.purchaseDate.high)
+  //   ))
+  // )
+
+  // let serviceTicketsMatch = (tickets: ServiceTicket[]) => ( //determine if filter is applied or both serviceTicket statuses are shown or (item has service tickets and those with service tickets are shown) or (item does not have service tickets and items without service tickets are shown)
+  //   !applied('hasServiceTickets') || filters.hasServiceTickets === 'both' || (filters.hasServiceTickets === 'yes' && tickets.length) || (filters.hasServiceTickets === 'no' && !tickets.length)
+  // )
+
+  // let locationsMatch = (locations: string[]) => (!applied('locations') || filters.locations.some(filterLoc => locations.includes(filterLoc))) //determine if filter is unapplied or some location filter matches any location of the item
+
+  // if (!searchText && checkObjEqual(filters, defaultFilters)) return arr; //pass unfiltered array if no filters or search applied
+  // return arr.filter(gearItem => (
+  //   (!searchText || (searchText && gearItem.name.includes(searchText))) && //pass items matching search text
+  //   (checkObjEqual(filters, defaultFilters) || //do not check filters if no filters are applied
+  //     numberInRange(gearItem.avgPurchaseCost, 'avgPurchaseCost') ||
+  //     numberInRange(gearItem.rentalCost, 'rentalCost') ||
+  //     numberInRange(gearItem.powerDraw, 'powerDraw') ||
+  //     numberInRange(gearItem.qtyOwned, 'qtyOwned') ||
+  //     dateInRange(gearItem.purchaseDates.map(item => item.date)) ||
+  //     serviceTicketsMatch(gearItem.serviceTickets) ||
+  //     locationsMatch(gearItem.locations.map(item => item.location))
+  //   )
+  // ))
+  return arr;
+}
+
 
 
 const InventoryScreen = () => {
@@ -22,30 +59,25 @@ const InventoryScreen = () => {
   const [ticketModalVisible, setTicketModalVisible] = useState(false);
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [searchBarVisible, setSearchBarVisible] = useState(false); 
-  const [currentExpanded, setCurrentExpanded] = useState('');
+  const [currentExpanded, setCurrentExpanded] = useState(''); //track current expanded GearExpandable to force all others closed
   const [searchText, setSearchText] = useState('');
-  const [filters, setFilters] = useState<Filters>({
-    
-  });
 
+  const defaultFilters = getDefaultGearFilters(gear);
+  const [filters, setFilters] = useState<GearFilters>(defaultFilters);
+
+  const [searchShifted, setSearchShifted] = useState(false); //search bar shifts up when keyboard visible
   const searchShift = useAnimatedValue(0);
 
-  const filterGear = (arr: Gear[]) => {
-    if (!searchText && Object.values(filters).every(item => !item)) return arr;
-    return arr.filter(gearItem => (
-      (searchText && gearItem.name.includes(searchText))
-    ))
-  }
 
   return(
     <View style={globalStyles.screenWrapper}>
       <View style={styles.gearExpandableContainer}>
-        <GearExpandable name='INFRASTRUCTURE' currentExpanded={currentExpanded} onExpand={name => setCurrentExpanded(name)} data={filterGear(gear.infrastructure)}/>
-        <GearExpandable name='LASER FIXTURES' currentExpanded={currentExpanded} onExpand={name => setCurrentExpanded(name)} data={filterGear(gear.laserFixtures)}/>
-        <GearExpandable name='LX FIXTURES' currentExpanded={currentExpanded} onExpand={name => setCurrentExpanded(name)} data={filterGear(gear.lxFixtures)}/>
-        <GearExpandable name='SFX' currentExpanded={currentExpanded} onExpand={name => setCurrentExpanded(name)} data={filterGear(gear.sfx)}/>
-        <GearExpandable name='SHOW CONTROL' currentExpanded={currentExpanded} onExpand={name => setCurrentExpanded(name)} data={filterGear(gear.showControl)}/>
-        <GearExpandable name='CABLE' currentExpanded={currentExpanded} onExpand={name => setCurrentExpanded(name)} data={filterGear(gear.cable)}/>
+        <GearExpandable name='INFRASTRUCTURE' currentExpanded={currentExpanded} onExpand={name => setCurrentExpanded(name)} data={filterGear(gear.infrastructure, filters, defaultFilters, searchText)}/>
+        <GearExpandable name='LASER FIXTURES' currentExpanded={currentExpanded} onExpand={name => setCurrentExpanded(name)} data={filterGear(gear.laserFixtures, filters, defaultFilters, searchText)}/>
+        <GearExpandable name='LX FIXTURES' currentExpanded={currentExpanded} onExpand={name => setCurrentExpanded(name)} data={filterGear(gear.lxFixtures, filters, defaultFilters, searchText)}/>
+        <GearExpandable name='SFX' currentExpanded={currentExpanded} onExpand={name => setCurrentExpanded(name)} data={filterGear(gear.sfx, filters, defaultFilters, searchText)}/>
+        <GearExpandable name='SHOW CONTROL' currentExpanded={currentExpanded} onExpand={name => setCurrentExpanded(name)} data={filterGear(gear.showControl, filters, defaultFilters, searchText)}/>
+        <GearExpandable name='CABLE' currentExpanded={currentExpanded} onExpand={name => setCurrentExpanded(name)} data={filterGear(gear.cable, filters, defaultFilters, searchText)}/>
       </View>
 
       <View style={styles.bottomBar}>
@@ -55,11 +87,13 @@ const InventoryScreen = () => {
               <TextInput
                   value={searchText}
                   style={styles.searchText}
-                  onChangeText={(text: string) => {setSearchText(text)}}
+                  onChangeText={text => setSearchText(text)}
                   onFocus={() => {
+                    setSearchShifted(true);
                     Animated.timing(searchShift, {toValue: -67, duration: 300, useNativeDriver: true}).start();
                   }}
                   onEndEditing={() => {
+                    setSearchShifted(false);
                     Animated.timing(searchShift, {toValue: 0, duration: 300, useNativeDriver: true}).start();
                   }}
                   placeholder={'SEARCH'}
@@ -72,15 +106,17 @@ const InventoryScreen = () => {
                 />
             </View>
 
-            <TouchableOpacity onPress={() => setFilterModalVisible(true)}>
-              <Ionicons name={'filter'} color={Object.values(filters).every(item => !item) ? COLORS.GOLD : COLORS.GREEN} size={35}/>
-            </TouchableOpacity>
+            {!searchShifted &&
+              <TouchableOpacity onPress={() => setFilterModalVisible(true)}>
+                <Ionicons name={'filter'} color={checkObjEqual(filters, defaultFilters) ? COLORS.GOLD : COLORS.GREEN} size={35}/>
+              </TouchableOpacity>
+            }
           </Animated.View>
         }
 
         <View style={styles.actionButtonBar}>
         <TouchableOpacity onPress={() => setSearchBarVisible(!searchBarVisible)} style={styles.actionButton}>
-            <Ionicons name={'search'} color={searchText || !Object.values(filters).every(item => !item) ? COLORS.GREEN : COLORS.GOLD} size={65}/>
+            <Ionicons name={'search'} color={!searchText && checkObjEqual(filters, defaultFilters) ? COLORS.GOLD : COLORS.GREEN} size={65}/>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setAddModalVisible(true)} style={styles.actionButton}>
             <Ionicons name={'add-circle-outline'} color={COLORS.GOLD} size={100}/>
@@ -93,7 +129,7 @@ const InventoryScreen = () => {
 
       {addModalVisible && <AddGearModal gear={gear} onClose={() => setAddModalVisible(false)}/>}
       {ticketModalVisible && <AddTicketModal gear={gear} onClose={() => setTicketModalVisible(false)}/>}
-      {filterModalVisible && <FilterGearModal onSubmit={filters => setFilters(filters)} onClose={() => setFilterModalVisible(false)}/>}
+      {filterModalVisible && <FilterGearModal gear={gear} onSubmit={filters => setFilters(filters)} onClose={() => setFilterModalVisible(false)}/>}
     </View>
   );
 }
@@ -118,10 +154,8 @@ const styles = StyleSheet.create({
   },
 
   searchField: {
+    ...globalStyles.border,
     backgroundColor: COLORS.BLACK,
-    borderColor: COLORS.GOLD,
-    borderWidth: 2,
-    borderRadius: 10,
     height: 40,
     flex: 1,
     marginRight: 5,

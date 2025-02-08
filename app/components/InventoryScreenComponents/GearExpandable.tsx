@@ -5,7 +5,7 @@ import Gear from '@/app/utils/Gear';
 
 import GearCard from '@/app/components/InventoryScreenComponents/GearCard';
 
-import { COLORS } from '@/app/globals';
+import globalStyles, { COLORS } from '@/app/globals';
 
 
 const GearExpandable = ({data, name, currentExpanded, onExpand}: {data: Gear[], name: string, currentExpanded?: string, onExpand?: (name: string) => void}) => {
@@ -54,9 +54,8 @@ const GearExpandable = ({data, name, currentExpanded, onExpand}: {data: Gear[], 
 
 const styles = StyleSheet.create({
   headerView: {
+    ...globalStyles.border,
     margin: 4,
-    borderWidth: 2,
-    borderRadius: 10
   },
 
   headerText: {
@@ -73,13 +72,11 @@ const styles = StyleSheet.create({
   },
 
   emptyView: {
+    ...globalStyles.border,
     padding: 5,
     margin: 10,
     alignItems: 'center',
     backgroundColor: COLORS.GRAY,
-    borderColor: COLORS.GOLD,
-    borderWidth: 2,
-    borderRadius: 10
   }
 });
 

@@ -32,35 +32,41 @@ type DropdownPropsWithExpand = {
 }
 
 const Dropdown = (props: DropdownProps | DropdownPropsWithExpand) => {
-  const [currentSelection, setCurrentSelection] = useState({key: props.placeholderText || '', value: null});
+  const {data, onSelect, placeholderText, isDisabled, style, searchEnabled, addEnabled, expandLogic} = props
+  const {name, onExpand, currentExpanded} = expandLogic ? props as DropdownPropsWithExpand : {};
+  
+  const [currentSelection, setCurrentSelection] = useState({key: placeholderText || '', value: null});
   const [expanded, setExpanded] = useState(false);
   const [typedText, setTypedText] = useState('');
+  const [focused, setFocused] = useState(false);
 
   useEffect(()=>{
-    console.log((props.placeholderText || '') + ' CHANGE:\n' + props.data)
     //setTypedText('');
-    //setCurrentSelection({key: props.placeholderText || '', value: null});
-  }, [props.data]);
+    //setCurrentSelection({key: placeholderText || '', value: null});
+  }, [data]);
 
-  if (props.expandLogic && expanded && props.currentExpanded != props.name) setExpanded(false);
+  if (expandLogic && expanded && currentExpanded != name) setExpanded(false);
 
   const filterDropdown = () => {
-    let filteredList = props.data.filter(item => item.key.toLowerCase().includes(typedText.toLowerCase()));
-    return props.addEnabled ? filteredList.concat([{key: `Add "${typedText}"`, value: typedText}]) : filteredList;
+    if (!typedText || typedText == `Add "${currentSelection.value}"`) return data;
+    let filteredList = data.filter(item => item.key.toLowerCase().includes(typedText.toLowerCase()));
+    if (filteredList.some(item => item.key === typedText)) return data;
+    return addEnabled ? filteredList.concat([{key: `Add "${typedText}"`, value: typedText}]) : filteredList;
   }
 
   return (
-    <View style={props.style}>
-      <TouchableOpacity onPress={() => {if (!props.isDisabled) {setExpanded(!expanded); if (props.expandLogic) props.onExpand(props.name)}}}>
-        <View style={{...styles.textBox, borderColor: props.isDisabled ? COLORS.LIGHT_GRAY : COLORS.GOLD}}>
-          {props.searchEnabled ? 
+    <View style={style}>
+      <TouchableOpacity onPress={() => {if (!isDisabled) {setExpanded(!expanded); if (onExpand) onExpand(name as string)}}}>
+        <View style={{...styles.textBox, borderColor: isDisabled ? COLORS.LIGHT_GRAY : COLORS.GOLD}}>
+          {searchEnabled ? 
             <TextInput
               value={typedText}
-              editable={!props.isDisabled}
+              editable={!isDisabled}
               style={styles.selectedText}
-              onChangeText={(text: string) => setTypedText(text)}
-              onFocus={() => setExpanded(true)}
-              placeholder={props.placeholderText}
+              onChangeText={text => setTypedText(text)}
+              onFocus={() => {setFocused(true); setExpanded(true); if (onExpand) onExpand(name as string);}}
+              onEndEditing={() => setFocused(false)}
+              placeholder={placeholderText}
               placeholderTextColor={COLORS.LIGHT_GRAY}
               returnKeyType={'done'}
               returnKeyLabel={'done'}
@@ -76,7 +82,7 @@ const Dropdown = (props: DropdownProps | DropdownPropsWithExpand) => {
             />
           }
 
-          <Ionicons name={expanded ? 'caret-up-outline' : 'caret-down-outline'} color={props.isDisabled ? COLORS.LIGHT_GRAY : COLORS.GOLD} size={30} style={{marginLeft: 'auto'}}/>
+          <Ionicons name={expanded ? 'caret-up-outline' : 'caret-down-outline'} color={isDisabled ? COLORS.LIGHT_GRAY : COLORS.GOLD} size={30} style={{marginLeft: 'auto'}}/>
         </View>
       </TouchableOpacity>  
 
@@ -88,13 +94,13 @@ const Dropdown = (props: DropdownProps | DropdownPropsWithExpand) => {
             </View>
           }
           <FlatList
-            data={typedText ? filterDropdown() : props.data}
+            data={filterDropdown()}
             renderItem={item => (
               <TouchableOpacity onPress={() => {
                 setCurrentSelection(item.item);
                 setExpanded(false);
-                props.onSelect(item.item, item.item.value === typedText);
-                if (props.searchEnabled) setTypedText(item.item.key);
+                onSelect(item.item, item.item.value === typedText);
+                if (searchEnabled) setTypedText(item.item.key);
               }}>
                 <View style={styles.listItem}>
                   <Text style={{color: COLORS.WHITE}}>{item.item.key}</Text>
@@ -111,43 +117,43 @@ const Dropdown = (props: DropdownProps | DropdownPropsWithExpand) => {
 }
 
 const styles = StyleSheet.create({
-    textBox: {
-      backgroundColor: COLORS.BLACK,
-      borderRadius: 3,
-      borderWidth: 2,
-      height: 40,
-      flexDirection: 'row',
-      padding: 4
-    },
+  textBox: {
+    backgroundColor: COLORS.BLACK,
+    borderRadius: 3,
+    borderWidth: 2,
+    height: 40,
+    flexDirection: 'row',
+    padding: 4
+  },
 
-    selectedText: {
-      color: COLORS.WHITE,
-      fontWeight: 'bold',
-      flex: 1
-    },
+  selectedText: {
+    color: COLORS.WHITE,
+    fontWeight: 'bold',
+    flex: 1
+  },
 
-    listSeparator: {
-      height: 2,
-      backgroundColor: COLORS.WEAK_BROWN,
-      marginLeft: 6,
-      marginRight: 6
-    },
+  listSeparator: {
+    height: 2,
+    backgroundColor: COLORS.WEAK_BROWN,
+    marginLeft: 6,
+    marginRight: 6
+  },
 
-    listContainer: {
-      borderRadius: 5,
-      backgroundColor: COLORS.BLACK,
-      borderColor: COLORS.WEAK_BROWN,
-      borderWidth: 2,
-      position: 'absolute',
-      zIndex: 1,
-      marginTop: 40,
-      maxHeight: 200
-    },
+  listContainer: {
+    borderRadius: 5,
+    backgroundColor: COLORS.BLACK,
+    borderColor: COLORS.WEAK_BROWN,
+    borderWidth: 2,
+    position: 'absolute',
+    zIndex: 1,
+    marginTop: 40,
+    maxHeight: 200
+  },
 
-    listItem: {
-      flex: 1,
-      padding: 5
-    }
+  listItem: {
+    flex: 1,
+    padding: 5
+  }
 });
 
 export default Dropdown;

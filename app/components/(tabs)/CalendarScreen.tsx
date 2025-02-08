@@ -12,6 +12,7 @@ import globalStyles, { COLORS } from '@/app/globals';
 const CalendarScreen = () => {
   const [addModalVisible, setAddModalVisible] = useState(false);
 
+
     return(
         <View style={globalStyles.screenWrapper}>
           <CalendarList
@@ -30,11 +31,11 @@ const CalendarScreen = () => {
             }}
           />
 
-          <TouchableOpacity onPress={() => {setAddModalVisible(true)}} style={styles.addButton}>
+          <TouchableOpacity onPress={() => setAddModalVisible(true)} style={styles.addButton}>
             <Ionicons name={'add-circle-outline'} color={COLORS.GOLD} size={100} />
           </TouchableOpacity>
 
-          {/* {addModalVisible && <AddEventModal/>} */}
+          {addModalVisible && <AddEventModal/>}
         </View>
     );
 }

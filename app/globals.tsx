@@ -12,9 +12,11 @@ export enum COLORS {
 }
 
 export const getCurrentDate = () => {
-    const date = new Date();
-    return (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getFullYear().toString().slice(2)
+  const date = new Date();
+  return (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getFullYear().toString().slice(2)
 }
+
+export const checkObjEqual = (obj1: object, obj2: object) => (JSON.stringify(obj1) === JSON.stringify(obj2))
 
 const globalStyles = StyleSheet.create({
     screenWrapper: {
@@ -30,12 +32,29 @@ const globalStyles = StyleSheet.create({
       borderRadius: 5,
       margin: 10,
       padding: 8,
-      paddingBottom: 14
+      justifyContent: 'center'
+    },
+    
+    modalFieldSize: {
+      height: 40,
+      width: 60
     },
 
     textInput: {
       color: COLORS.WHITE,
-      fontWeight: 'bold'
+      fontWeight: 'bold',
+      alignSelf: 'center'
+    },
+
+    border: {
+      borderColor: COLORS.GOLD,
+      borderWidth: 2,
+      borderRadius: 10
+    },
+
+    dropdown: {
+      margin: 10,
+      width: 180
     }
 });
 

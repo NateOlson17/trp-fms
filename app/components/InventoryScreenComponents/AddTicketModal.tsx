@@ -5,9 +5,9 @@ import ServiceTicket from '@/app/utils/ServiceTicket';
 import Gear, { GearContainer } from '@/app/utils/Gear';
 
 import Dropdown from '@/app/components/Dropdown';
+import GenericModal from '@/app/components/GenericModal';
 
 import globalStyles, { COLORS, getCurrentDate } from '@/app/globals';
-import GenericModal from '@/app/components/GenericModal';
 
 
 const AddTicketModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void}) => {
@@ -29,7 +29,7 @@ const AddTicketModal = ({gear, onClose}: {gear: GearContainer, onClose: () => vo
         ]} 
         onSelect={(item: {key: string, value: string}) => setNewGearContainer(item.value)}
         placeholderText={'CATEGORY'}
-        style={{margin: 10, width: 140}}
+        style={globalStyles.dropdown}
         searchEnabled={false}
         expandLogic
         name={'CATEGORY'}
@@ -43,16 +43,17 @@ const AddTicketModal = ({gear, onClose}: {gear: GearContainer, onClose: () => vo
           data={newGearContainer ? gear[newGearContainer as keyof GearContainer].map(item => ({key: item.name, value: item})) : []} 
           onSelect={(item: {key: string, value: Gear}) => setNewGear(item.value)}
           placeholderText={'ITEM'}
-          style={{margin: 10, width: 170}}
+          style={globalStyles.dropdown}
           searchEnabled
           expandLogic
           name={'ITEM'}
           onExpand={name => setCurrentExpanded(name)}
           currentExpanded={currentExpanded}
         />
-        <View style={{...globalStyles.modalField, width: 60, paddingBottom: 5, paddingTop: 9}}>
+        <View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize}}>
           <TextInput
-            style={{...globalStyles.textInput, alignSelf: 'center'}}
+            style={{...globalStyles.textInput, ...globalStyles.modalFieldSize}}
+            textAlign={'center'}
             onChangeText={(text: string) => setNewTicket({...newTicket, qty: Number(text)})}
             placeholder={'QTY'}
             placeholderTextColor={COLORS.LIGHT_GRAY}
@@ -68,7 +69,7 @@ const AddTicketModal = ({gear, onClose}: {gear: GearContainer, onClose: () => vo
 
       <View style={globalStyles.modalField}>
         <TextInput
-          style={globalStyles.textInput}
+          style={{...globalStyles.textInput, minWidth: 200, minHeight: 30, marginRight: 'auto'}}
           onChangeText={(text: string) => setNewTicket({...newTicket, notes: text})}
           placeholder={'NOTES'}
           placeholderTextColor={COLORS.LIGHT_GRAY}

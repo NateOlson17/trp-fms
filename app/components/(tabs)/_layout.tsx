@@ -19,14 +19,7 @@ export const TechContext = createContext<Technician[]>([]);
 
 
 export default function TabLayout() {
-  const [gear, setGear] = useState<GearContainer>({
-    infrastructure: [],
-    laserFixtures: [],
-    lxFixtures: [],
-    sfx: [],
-    showControl: [],
-    cable: []
-  });
+  const [gear, setGear] = useState<GearContainer>({infrastructure: [], laserFixtures: [], lxFixtures: [], sfx: [], showControl: [], cable: []});
   const [events, setEvents] = useState<Event[]>([]);
   const [techs, setTechs] = useState<Technician[]>([]);
 
