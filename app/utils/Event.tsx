@@ -1,5 +1,5 @@
-import Gear from './Gear';
-import Technician from './Technician';
+import Gear from '@/app/utils/Gear';
+import Technician from '@/app/utils/Technician';
 
 
 export default class Event {

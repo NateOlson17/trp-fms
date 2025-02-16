@@ -12,11 +12,9 @@ const GearExpandable = ({data, name, currentExpanded, onExpand}: {data: Gear[], 
   const [expanded, setExpanded] = useState(false);
 
   const listScaleAnim = useAnimatedValue(0);
-
-  var containsDamaged = false;
-  for (const gear of data) {if (gear.serviceTickets.length) {containsDamaged = true; break;}}
-
-  if (expanded && currentExpanded && currentExpanded != name) {setExpanded(false); listScaleAnim.setValue(0)} //force collapse if another GearExpandable is expanded
+  if (expanded && currentExpanded && currentExpanded !== name) {setExpanded(false); listScaleAnim.setValue(0);} //force collapse if another GearExpandable is expanded
+  
+  let containsDamaged = data.some(gear => gear.serviceTickets.length);
 
   return (
     <View>
@@ -37,19 +35,19 @@ const GearExpandable = ({data, name, currentExpanded, onExpand}: {data: Gear[], 
           {data.length ? 
             <FlatList
             data={data}
-            renderItem={item => <GearCard gearItem={item.item}/>}
+            renderItem={({item}) => <GearCard gearItem={item}/>}
             keyExtractor={gearItem => gearItem.key}
-          />
+            />
           :
-          <View style={styles.emptyView}>
-            <Text style={{color: COLORS.WHITE}}>NO MATCHES</Text>
-          </View>
+            <View style={styles.emptyView}>
+              <Text style={{color: COLORS.WHITE}}>NO MATCHES</Text>
+            </View>
           }
         </Animated.View>
       }
     </View>
-  );
-};
+  )
+}
 
 
 const styles = StyleSheet.create({

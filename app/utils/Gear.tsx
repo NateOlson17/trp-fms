@@ -1,8 +1,8 @@
-import { get, push, ref, set } from 'firebase/database';
+import { push, ref, remove, set } from 'firebase/database';
 import rtdb from '@/app/rtdb_config';
 
-import ServiceTicket from './ServiceTicket';
-import { getCurrentDate } from '../globals';
+import ServiceTicket from '@/app/utils/ServiceTicket';
+import { getCurrentDate } from '@/app/globals';
 
 export type GearContainer = {
         infrastructure: Gear[];
@@ -14,7 +14,17 @@ export type GearContainer = {
 }
 
 export default class Gear {
-        [key: string]: string | number | string[] | ServiceTicket[] | {qty: number, date: string}[] | {qty: number, location: string}[] | ((ticket: ServiceTicket) => void) | ((props: {qty: number, cost: number, location: string}) => void) | ((container: keyof GearContainer, gear: GearContainer) => void)
+        [key: string]: 
+                string | 
+                number | 
+                string[] | 
+                ServiceTicket[] | 
+                {qty: number, date: string}[] | 
+                {qty: number, location: string}[] | 
+                ((ticket: ServiceTicket) => void) | 
+                ((qty: number, cost: number, location: string) => void) | 
+                ((container: keyof GearContainer, gear: GearContainer) => void) | 
+                ((qty: number, location: string) =>void)
         name: string;
         includes: string[];
         avgPurchaseCost: number;
@@ -29,13 +39,13 @@ export default class Gear {
 
         constructor(args: {
                 name: string,
-                includes: string[],
+                includes: string[] | undefined,
                 avgPurchaseCost: number,
                 rentalCost: number,
                 powerDraw: number,
                 qtyOwned: number,
                 serviceTickets: ServiceTicket[] | undefined,
-                notes: string,
+                notes: string | undefined,
                 purchaseDates: {qty: number, date: string}[],
                 locations: {qty: number, location: string}[],
                 key: string | undefined
@@ -47,7 +57,7 @@ export default class Gear {
                 this.powerDraw = args.powerDraw;
                 this.qtyOwned = args.qtyOwned;
                 this.serviceTickets = args.serviceTickets ? args.serviceTickets.map(ticket => new ServiceTicket(ticket)) : [];
-                this.notes = args.notes;
+                this.notes = args.notes || '';
                 this.purchaseDates = args.purchaseDates || [];
                 this.locations = args.locations || [];
                 this.key = args.key || '';
@@ -67,19 +77,32 @@ export default class Gear {
                 );
         }
 
-        addQty(props: {qty: number, cost: number, location: string}) {
-                const {qty, cost, location} = props;
+        addQty = (qty: number, cost: number, location: string) => {
                 this.avgPurchaseCost = (this.qtyOwned * this.avgPurchaseCost + cost) / (this.qtyOwned + qty);
                 this.qtyOwned += qty;
                 this.purchaseDates.push({qty: qty, date: getCurrentDate()});
                 if (!this.locations.map(loc => loc.location).includes(location)) {
                         this.locations.push({qty: qty, location: location});
                 } else {
-                        this.locations.forEach(loc => {if (loc.location === location) {loc.qty += qty}});
+                        this.locations.forEach(loc => {if (loc.location === location) {loc.qty += qty;}});
                 }
 
                 set(ref(rtdb, `GearContainer/${this.key}`), 
                         Object.fromEntries(Object.entries(this).filter(entry => typeof entry[1] != 'function' && entry[0] != 'key'))
                 );
+        }
+
+        deleteQty = (qty: number, location: string) => {
+                if (qty === this.qtyOwned) {
+                        remove(ref(rtdb, `GearContainer/${this.key}`));
+                } else {
+                        this.qtyOwned -= qty;
+                        this.locations.forEach(loc => {if (loc.location === location) {loc.qty -= qty;}});
+
+                        set(ref(rtdb, `GearContainer/${this.key}`), 
+                                Object.fromEntries(Object.entries(this).filter(entry => typeof entry[1] != 'function' && entry[0] != 'key'))
+                        );
+
+                }
         }
 }

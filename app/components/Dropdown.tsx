@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, FlatList, ViewStyle, TextInput } from 'react-native';
 
-import { COLORS } from '@/app/globals';
+import { COLORS, KeyVal } from '@/app/globals';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 
 type DropdownProps = {
-  data: {key: string, value: any}[], 
-  onSelect: (item: {key: string, value: any}, added: boolean) => void;
+  data: KeyVal[], 
+  onSelect: (item: KeyVal, added: boolean) => void;
   placeholderText?: string;
   isDisabled?: boolean;
   style?: ViewStyle;
@@ -18,8 +18,8 @@ type DropdownProps = {
 }
 
 type DropdownPropsWithExpand = {
-  data: {key: string, value: any}[];
-  onSelect: (item: {key: string, value: any}, added: boolean) => void;
+  data: KeyVal[];
+  onSelect: (item: KeyVal, added: boolean) => void;
   placeholderText?: string;
   isDisabled?: boolean;
   style?: ViewStyle;
@@ -32,31 +32,33 @@ type DropdownPropsWithExpand = {
 }
 
 const Dropdown = (props: DropdownProps | DropdownPropsWithExpand) => {
-  const {data, onSelect, placeholderText, isDisabled, style, searchEnabled, addEnabled, expandLogic} = props
+  const {data, onSelect, placeholderText, isDisabled, style, searchEnabled, addEnabled, expandLogic} = props;
   const {name, onExpand, currentExpanded} = expandLogic ? props as DropdownPropsWithExpand : {};
   
-  const [currentSelection, setCurrentSelection] = useState({key: placeholderText || '', value: null});
+  const [currentSelection, setCurrentSelection] = useState({key: placeholderText || '', val: null});
   const [expanded, setExpanded] = useState(false);
   const [typedText, setTypedText] = useState('');
-  const [focused, setFocused] = useState(false);
 
   useEffect(()=>{
-    //setTypedText('');
-    //setCurrentSelection({key: placeholderText || '', value: null});
-  }, [data]);
+    if (!props.data.map(item => item.key).includes(typedText)) {
+      setTypedText('');
+      setCurrentSelection({key: placeholderText || '', val: null});
+      onSelect(currentSelection, false);
+    }
+  }, [props.data]);
 
-  if (expandLogic && expanded && currentExpanded != name) setExpanded(false);
+  if (expandLogic && expanded && currentExpanded !== name) setExpanded(false);
 
   const filterDropdown = () => {
-    if (!typedText || typedText == `Add "${currentSelection.value}"`) return data;
-    let filteredList = data.filter(item => item.key.toLowerCase().includes(typedText.toLowerCase()));
-    if (filteredList.some(item => item.key === typedText)) return data;
-    return addEnabled ? filteredList.concat([{key: `Add "${typedText}"`, value: typedText}]) : filteredList;
+    if (!typedText || (addEnabled && typedText === `Add "${currentSelection.val}"`)) return data;
+    const filteredList = data.filter(item => item.key.toLowerCase().includes(typedText.toLowerCase()));
+    if (filteredList.some(item => item.key === typedText)) return [data.filter(item => item.key === typedText)[0], ...data.filter(item => item.key !== typedText)];
+    return addEnabled ? filteredList.concat([{key: `Add "${typedText}"`, val: typedText}]) : filteredList;
   }
 
   return (
     <View style={style}>
-      <TouchableOpacity onPress={() => {if (!isDisabled) {setExpanded(!expanded); if (onExpand) onExpand(name as string)}}}>
+      <TouchableOpacity onPress={() => {if (!isDisabled) {setExpanded(!expanded); if (onExpand && name) onExpand(name);}}}>
         <View style={{...styles.textBox, borderColor: isDisabled ? COLORS.LIGHT_GRAY : COLORS.GOLD}}>
           {searchEnabled ? 
             <TextInput
@@ -64,8 +66,7 @@ const Dropdown = (props: DropdownProps | DropdownPropsWithExpand) => {
               editable={!isDisabled}
               style={styles.selectedText}
               onChangeText={text => setTypedText(text)}
-              onFocus={() => {setFocused(true); setExpanded(true); if (onExpand) onExpand(name as string);}}
-              onEndEditing={() => setFocused(false)}
+              onFocus={() => {setExpanded(true); if (onExpand && name) onExpand(name);}}
               placeholder={placeholderText}
               placeholderTextColor={COLORS.LIGHT_GRAY}
               returnKeyType={'done'}
@@ -78,7 +79,7 @@ const Dropdown = (props: DropdownProps | DropdownPropsWithExpand) => {
             <TextInput
               value={currentSelection.key}
               editable={false}
-              style={{...styles.selectedText, color: currentSelection.value ? COLORS.WHITE : COLORS.LIGHT_GRAY}}
+              style={{...styles.selectedText, color: currentSelection.val ? COLORS.WHITE : COLORS.LIGHT_GRAY}}
             />
           }
 
@@ -99,7 +100,7 @@ const Dropdown = (props: DropdownProps | DropdownPropsWithExpand) => {
               <TouchableOpacity onPress={() => {
                 setCurrentSelection(item.item);
                 setExpanded(false);
-                onSelect(item.item, item.item.value === typedText);
+                onSelect(item.item, item.item.val === typedText);
                 if (searchEnabled) setTypedText(item.item.key);
               }}>
                 <View style={styles.listItem}>
@@ -107,7 +108,7 @@ const Dropdown = (props: DropdownProps | DropdownPropsWithExpand) => {
                 </View>
               </TouchableOpacity>
             )}
-            ItemSeparatorComponent={() => (<View style={styles.listSeparator}/>)}
+            ItemSeparatorComponent={() => <View style={styles.listSeparator}/>}
             keyExtractor={listItem => listItem.key}
           />
         </View>

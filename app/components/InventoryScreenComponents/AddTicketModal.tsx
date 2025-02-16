@@ -6,42 +6,45 @@ import Gear, { GearContainer } from '@/app/utils/Gear';
 
 import Dropdown from '@/app/components/Dropdown';
 import GenericModal from '@/app/components/GenericModal';
+import Radio from '@/app/components/Radio';
 
-import globalStyles, { COLORS, getCurrentDate } from '@/app/globals';
+import globalStyles, { COLORS, getCurrentDate, KeyVal, STD_OPTIONS } from '@/app/globals';
 
 
 const AddTicketModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void}) => {
-  const [newGearContainer, setNewGearContainer] = useState('')
-  const [newTicket, setNewTicket] = useState(new ServiceTicket({qty: 0, date: getCurrentDate(), notes: ''}));
-  const [newGear, setNewGear] = useState({} as Gear)
+  const [newGearContainer, setNewGearContainer] = useState<keyof GearContainer>('' as keyof GearContainer)
+  const [newTicket, setNewTicket] = useState(new ServiceTicket({qty: 0, location: 'CO', date: getCurrentDate(), notes: ''}));
+  const [gearItem, setGearItem] = useState({} as Gear)
   const [currentExpanded, setCurrentExpanded] = useState('')
 
 
   return(
-    <GenericModal onClose={onClose} onSubmit={() => newGear.addTicket(newTicket)} submitValidated={newGear && newTicket.qty > 0 && newTicket.qty <= newGear.qtyOwned}>
-      <Dropdown 
-        data={[
-          {key: 'INFRASTRUCTURE', value: 'infrastructure'},
-          {key: 'LASER FIXTURES', value: 'laserFixtures'},
-          {key: 'LX FIXTURES', value: 'lxFixtures'},
-          {key: 'SFX', value: 'sfx'},
-          {key: 'SHOW CONTROL', value: 'showControl'}
-        ]} 
-        onSelect={(item: {key: string, value: string}) => setNewGearContainer(item.value)}
-        placeholderText={'CATEGORY'}
-        style={globalStyles.dropdown}
-        searchEnabled={false}
-        expandLogic
-        name={'CATEGORY'}
-        onExpand={name => setCurrentExpanded(name)}
-        currentExpanded={currentExpanded}
-      />
+    <GenericModal onClose={onClose} onSubmit={() => gearItem.addTicket(newTicket)} submitValidated={gearItem && newTicket.qty > 0 && newTicket.qty <= gearItem.qtyOwned}>
+      <View style={{flexDirection: 'row'}}>
+        <Dropdown 
+          data={STD_OPTIONS.containers} 
+          onSelect={(item: KeyVal<keyof GearContainer>) => setNewGearContainer(item.val)}
+          placeholderText={'CATEGORY'}
+          style={globalStyles.dropdown}
+          searchEnabled={false}
+          expandLogic
+          name={'CATEGORY'}
+          onExpand={name => setCurrentExpanded(name)}
+          currentExpanded={currentExpanded}
+        />
+        <Radio
+            data={STD_OPTIONS.locations}
+            onSelect={(item: KeyVal<string>) => setNewTicket({...newTicket, location: item.val})}
+            defaultOption={{key: 'CO', val: 'CO'}}
+            style={{marginLeft: 10, marginTop: 15}}
+          />
+      </View>
 
       <View style={{flexDirection: 'row'}}>
         <Dropdown
           isDisabled={!newGearContainer}
-          data={newGearContainer ? gear[newGearContainer as keyof GearContainer].map(item => ({key: item.name, value: item})) : []} 
-          onSelect={(item: {key: string, value: Gear}) => setNewGear(item.value)}
+          data={newGearContainer ? gear[newGearContainer].map(item => ({key: item.name, val: item})) : []} 
+          onSelect={(item: KeyVal<Gear>) => setGearItem(item.val)}
           placeholderText={'ITEM'}
           style={globalStyles.dropdown}
           searchEnabled

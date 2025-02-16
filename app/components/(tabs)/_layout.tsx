@@ -27,7 +27,7 @@ export default function TabLayout() {
     const gearRef = ref(rtdb, 'GearContainer'); //create reference to firebase rtdb at master gear container
     onValue(gearRef, snapshot => {
       if (snapshot.exists()) {
-        var tempGear: GearContainer = {infrastructure: [], laserFixtures: [], lxFixtures: [], sfx: [], showControl: [], cable: []};
+        let tempGear: GearContainer = {infrastructure: [], laserFixtures: [], lxFixtures: [], sfx: [], showControl: [], cable: []};
         snapshot.forEach(container => { //for each category object in master container (infrastructure, lxFixtures, etc)
           container.forEach(gearItem => { //for each Gear item in category
             tempGear[container.key as keyof GearContainer].push(new Gear({...gearItem.val(), key: `${container.key}/${gearItem.key}`})); //get key of current category and push to corresponding Gear array a new Gear object with data from current item
@@ -41,18 +41,18 @@ export default function TabLayout() {
     const techRef = ref(rtdb, 'TechnicianContainer'); //create reference to firebase rtdb at tech container
     onValue(techRef, snapshot => {
       if (snapshot.exists()) {
-        var tempTechs: Technician[] = [];
+        let tempTechs: Technician[] = [];
         snapshot.forEach(tech => {
           tempTechs.push(new Technician({...tech.val(), key: tech.key})); //create new Technician with DB data
         });
         setTechs(tempTechs);
-      } else {console.log('USER OFFLINE')}
+      } else {console.log('USER OFFLINE');}
     });
 
     const eventRef = ref(rtdb, 'EventContainer'); //create reference to firebase rtdb at event container
     onValue(eventRef, snapshot => {
       if (snapshot.exists()) {
-        var tempEvents: Event[] = [];
+        let tempEvents: Event[] = [];
         snapshot.forEach(event => {
           tempEvents.push(new Event({...event.val(), key: event.key})); //create new event for each item in DB container
         });

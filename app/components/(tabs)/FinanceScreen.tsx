@@ -5,7 +5,7 @@ const FinanceScreen = () => {
         <View style={{marginTop: 50}}>
             <Text>FINANCE</Text>
         </View>
-    );
+    )
 }
 
 export default FinanceScreen;

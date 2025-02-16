@@ -16,38 +16,37 @@ import globalStyles, { checkObjEqual, COLORS } from '@/app/globals';
 import { GearContext } from '@/app/components/(tabs)/_layout';
 
 const filterGear = (arr: Gear[], filters: GearFilters, defaultFilters: GearFilters, searchText: string) => {
-  // let applied = (prop: keyof GearFilters) => (filters[prop] != defaultFilters[prop]) //determine if prop has been changed from defaultS
+  const applied = (prop: keyof GearFilters) => (filters[prop] !== defaultFilters[prop]) //determine if prop has been changed from default
 
-  // let numberInRange = (num: number, prop: 'avgPurchaseCost' | 'rentalCost' | 'powerDraw' | 'qtyOwned') => (
-  //   !applied(prop) || (num >= filters[prop].low && num <= filters[prop].high) //determine if filter is unapplied or (applied and value within filter)
-  // )
+  const numberInRange = (num: number, prop: 'avgPurchaseCost' | 'rentalCost' | 'powerDraw' | 'qtyOwned') => (
+    !applied(prop) || (num >= filters[prop].low && num <= filters[prop].high) //determine if filter is unapplied or (applied and value within filter)
+  )
 
-  // let dateInRange = (dateList: string[]) => ( //determine if filter is unapplied or (applied and value within filter)
-  //   !applied('purchaseDate') || dateList.some(date => (
-  //     Date.parse(date) >= Date.parse(filters.purchaseDate.low) && Date.parse(date) <= Date.parse(filters.purchaseDate.high)
-  //   ))
-  // )
+  const dateInRange = (dateList: string[]) => ( //determine if filter is unapplied or (applied and value within filter)
+    !applied('purchaseDate') || dateList.some(date => (
+      Date.parse(date) >= Date.parse(filters.purchaseDate.low) && Date.parse(date) <= Date.parse(filters.purchaseDate.high)
+    ))
+  )
 
-  // let serviceTicketsMatch = (tickets: ServiceTicket[]) => ( //determine if filter is applied or both serviceTicket statuses are shown or (item has service tickets and those with service tickets are shown) or (item does not have service tickets and items without service tickets are shown)
-  //   !applied('hasServiceTickets') || filters.hasServiceTickets === 'both' || (filters.hasServiceTickets === 'yes' && tickets.length) || (filters.hasServiceTickets === 'no' && !tickets.length)
-  // )
+  const serviceTicketsMatch = (tickets: ServiceTicket[]) => ( //determine if filter is applied or both serviceTicket statuses are shown or (item has service tickets and those with service tickets are shown) or (item does not have service tickets and items without service tickets are shown)
+    !applied('hasServiceTickets') || filters.hasServiceTickets === 'both' || (filters.hasServiceTickets === 'yes' && tickets.length) || (filters.hasServiceTickets === 'no' && !tickets.length)
+  )
 
-  // let locationsMatch = (locations: string[]) => (!applied('locations') || filters.locations.some(filterLoc => locations.includes(filterLoc))) //determine if filter is unapplied or some location filter matches any location of the item
+  const locationsMatch = (locations: string[]) => (!applied('locations') || filters.locations.some(filterLoc => locations.includes(filterLoc))) //determine if filter is unapplied or some location filter matches any location of the item
 
-  // if (!searchText && checkObjEqual(filters, defaultFilters)) return arr; //pass unfiltered array if no filters or search applied
-  // return arr.filter(gearItem => (
-  //   (!searchText || (searchText && gearItem.name.includes(searchText))) && //pass items matching search text
-  //   (checkObjEqual(filters, defaultFilters) || //do not check filters if no filters are applied
-  //     numberInRange(gearItem.avgPurchaseCost, 'avgPurchaseCost') ||
-  //     numberInRange(gearItem.rentalCost, 'rentalCost') ||
-  //     numberInRange(gearItem.powerDraw, 'powerDraw') ||
-  //     numberInRange(gearItem.qtyOwned, 'qtyOwned') ||
-  //     dateInRange(gearItem.purchaseDates.map(item => item.date)) ||
-  //     serviceTicketsMatch(gearItem.serviceTickets) ||
-  //     locationsMatch(gearItem.locations.map(item => item.location))
-  //   )
-  // ))
-  return arr;
+  if (!searchText && checkObjEqual(filters, defaultFilters)) return arr; //pass unfiltered array if no filters or search applied
+  return arr.filter(gearItem => (
+    (!searchText || (searchText && gearItem.name.includes(searchText))) && //pass items matching search text
+    (checkObjEqual(filters, defaultFilters) || ( //do not check filters if no filters are applied
+      numberInRange(gearItem.avgPurchaseCost, 'avgPurchaseCost') &&
+      numberInRange(gearItem.rentalCost, 'rentalCost') &&
+      numberInRange(gearItem.powerDraw, 'powerDraw') &&
+      numberInRange(gearItem.qtyOwned, 'qtyOwned') &&
+      dateInRange(gearItem.purchaseDates.map(item => item.date)) &&
+      serviceTicketsMatch(gearItem.serviceTickets) &&
+      locationsMatch(gearItem.locations.map(item => item.location))
+    ))
+  ))
 }
 
 
@@ -85,25 +84,25 @@ const InventoryScreen = () => {
           <Animated.View style={{...styles.searchBar,transform: [{translateY: searchShift}]}}>
             <View style={styles.searchField}>
               <TextInput
-                  value={searchText}
-                  style={styles.searchText}
-                  onChangeText={text => setSearchText(text)}
-                  onFocus={() => {
-                    setSearchShifted(true);
-                    Animated.timing(searchShift, {toValue: -67, duration: 300, useNativeDriver: true}).start();
-                  }}
-                  onEndEditing={() => {
-                    setSearchShifted(false);
-                    Animated.timing(searchShift, {toValue: 0, duration: 300, useNativeDriver: true}).start();
-                  }}
-                  placeholder={'SEARCH'}
-                  placeholderTextColor={COLORS.LIGHT_GRAY}
-                  returnKeyType={'done'}
-                  returnKeyLabel={'done'}
-                  keyboardAppearance={'dark'}
-                  maxLength={50}
-                  selectionColor={COLORS.GOLD}
-                />
+                value={searchText}
+                style={styles.searchText}
+                onChangeText={text => setSearchText(text)}
+                onFocus={() => {
+                  setSearchShifted(true);
+                  Animated.timing(searchShift, {toValue: -67, duration: 300, useNativeDriver: true}).start();
+                }}
+                onEndEditing={() => {
+                  setSearchShifted(false);
+                  Animated.timing(searchShift, {toValue: 0, duration: 300, useNativeDriver: true}).start();
+                }}
+                placeholder={'SEARCH'}
+                placeholderTextColor={COLORS.LIGHT_GRAY}
+                returnKeyType={'done'}
+                returnKeyLabel={'done'}
+                keyboardAppearance={'dark'}
+                maxLength={50}
+                selectionColor={COLORS.GOLD}
+              />
             </View>
 
             {!searchShifted &&
@@ -115,7 +114,7 @@ const InventoryScreen = () => {
         }
 
         <View style={styles.actionButtonBar}>
-        <TouchableOpacity onPress={() => setSearchBarVisible(!searchBarVisible)} style={styles.actionButton}>
+          <TouchableOpacity onPress={() => setSearchBarVisible(!searchBarVisible)} style={styles.actionButton}>
             <Ionicons name={'search'} color={!searchText && checkObjEqual(filters, defaultFilters) ? COLORS.GOLD : COLORS.GREEN} size={65}/>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setAddModalVisible(true)} style={styles.actionButton}>
@@ -131,7 +130,7 @@ const InventoryScreen = () => {
       {ticketModalVisible && <AddTicketModal gear={gear} onClose={() => setTicketModalVisible(false)}/>}
       {filterModalVisible && <FilterGearModal gear={gear} onSubmit={filters => setFilters(filters)} onClose={() => setFilterModalVisible(false)}/>}
     </View>
-  );
+  )
 }
 
 

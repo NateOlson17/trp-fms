@@ -3,7 +3,7 @@ import RangeSlider from 'rn-range-slider';
 
 import GenericModal from "@/app/components/GenericModal"
 
-import { COLORS } from "@/app/globals";
+import { COLORS, STD_OPTIONS } from "@/app/globals";
 import { useState } from "react";
 import { GearContainer } from "@/app/utils/Gear";
 
@@ -18,17 +18,23 @@ export type GearFilters = {
 }
 
 export const getDefaultGearFilters = (gear: GearContainer): GearFilters => {
-  let minPurchaseCost = 10000;
+  let minPurchaseCost = 100000;
   let maxPurchaseCost = 0;
   let maxRentalCost = 0;
   let maxPowerDraw = 0;
   let maxQtyOwned = 1;
+  let minDate = '1-0-3000';
+  let maxDate = '1-0-1971';
   Object.keys(gear).forEach(key => {gear[key as keyof GearContainer].forEach(gearItem => {
     if (gearItem.avgPurchaseCost < minPurchaseCost) minPurchaseCost = gearItem.avgPurchaseCost;
     if (gearItem.avgPurchaseCost > maxPurchaseCost) maxPurchaseCost = gearItem.avgPurchaseCost;
     if (gearItem.rentalCost > maxRentalCost) maxRentalCost = gearItem.rentalCost;
     if (gearItem.powerDraw > maxPowerDraw) maxPowerDraw = gearItem.powerDraw;
     if (gearItem.qtyOwned > maxQtyOwned) maxQtyOwned = gearItem.qtyOwned;
+    gearItem.purchaseDates.forEach(item => {
+      if (Date.parse(item.date) > Date.parse(maxDate)) maxDate = item.date;
+      if (Date.parse(item.date) < Date.parse(minDate)) minDate = item.date;
+    })
   })})
 
   return {
@@ -37,8 +43,8 @@ export const getDefaultGearFilters = (gear: GearContainer): GearFilters => {
     powerDraw: {low: 0, high: maxPowerDraw},
     qtyOwned: {low: 1, high: maxQtyOwned},
     hasServiceTickets: 'both',
-    purchaseDate: {low: '', high: ''},
-    locations: ['CO', 'CA']
+    purchaseDate: {low: minDate, high: maxDate},
+    locations: STD_OPTIONS.locations.map(loc => loc.val)
   }
   
 }

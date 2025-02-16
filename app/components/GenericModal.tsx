@@ -3,7 +3,7 @@ import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { COLORS } from "@/app/globals";
+import globalStyles, { COLORS } from "@/app/globals";
 
 
 const GenericModal = (props: PropsWithChildren<{onClose: () => void, onSubmit: () => void, submitValidated: boolean}>) => (
@@ -11,7 +11,7 @@ const GenericModal = (props: PropsWithChildren<{onClose: () => void, onSubmit: (
     <View style={styles.modal}>
         {props.children}
           
-        <View style={styles.modalExitButtons}>
+        <View style={globalStyles.modalExitButtons}>
           <TouchableOpacity onPress={props.onClose}>
             <Ionicons name={'close-circle'} color={COLORS.RED} size={70}/>
           </TouchableOpacity>
@@ -34,13 +34,6 @@ const styles = StyleSheet.create({
     marginBottom: 170,
     flex: 1,
     padding: 10
-  },
-
-  modalExitButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 20,
-    marginTop: 'auto'
   }
 });
 
