@@ -4,9 +4,7 @@
 
 ## GENERAL
 
-!-Comments
-!-Include units inside of border view for TextInputs
-!-Update DB content
+-Include units inside of border view for TextInputs
 -Pull DB data on splash/login screen
 -Use memo where applicable
 -Label text boxes above box so it's clear what they are when filled for every TextInput
@@ -15,11 +13,15 @@
 -Improve FlatList performance (<https://reactnative.dev/docs/optimizing-flatlist-configuration>)
 -Login via Technician object, pass user Technician object and online status as Context. Use this context to disable certain features. Set up firebase rules accordingly
 -Done key only appears on first AddModal call (selectionColor also resets) - create minimum reproducible example
+-Add Technician tab incl add/edit/filter button etc. options to generate 1099 etc.
+-Make sure I'm using Setstate everywhere and not modifying directly
 
 ## INVENTORY SCREEN
 
-!-Finish implementing filter functionality
 -Implement edit button on gearCard
+-Update DB content
+-Add purchase dates to card
+-dont allow selling/decommissioning of more than are available at a given location
 
 ## EVENT SCREEN
 
@@ -37,3 +39,4 @@
 -Cost breakdown by event
 -Sorting/filtering
 -Add search
+-timestamped transaction log

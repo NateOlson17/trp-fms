@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { useContext, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -8,8 +8,12 @@ import AddEventModal from '@/app/components/CalendarScreenComponents/AddEventMod
 
 import globalStyles, { COLORS } from '@/app/globals';
 
+import { GearContext } from '@/app/components/(tabs)/_layout';
+
 
 const CalendarScreen = () => {
+  const gear = useContext(GearContext);
+
   const [addModalVisible, setAddModalVisible] = useState(false);
 
 
@@ -29,19 +33,31 @@ const CalendarScreen = () => {
           dotColor: COLORS.GOLD,
           monthTextColor: COLORS.GOLD
         }}
+        renderHeader={date => {let dateObj = new Date(date); return <Text style={styles.headerText}>{dateObj.toLocaleString('en-EN', {month: 'long', year: 'numeric'})}</Text>}}
+        markingType='custom'
+        markedDates={{}}
+        onDayPress={day => {console.log(day);}}
       />
 
       <TouchableOpacity onPress={() => setAddModalVisible(true)} style={styles.addButton}>
         <Ionicons name={'add-circle-outline'} color={COLORS.GOLD} size={100} />
       </TouchableOpacity>
 
-      {addModalVisible && <AddEventModal/>}
+      {addModalVisible && <AddEventModal gear={gear} onClose={() => setAddModalVisible(false)} onSubmit={() => {console.log('SUBMITTED')}}/>}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-   addButton: {
+  headerText: {
+    padding: 5,
+    margin: 'auto',
+    color: COLORS.GOLD,
+    fontWeight: 'bold',
+    fontSize: 22
+  },
+
+  addButton: {
     alignSelf: 'center', 
     marginTop: 'auto', 
     marginBottom: 20

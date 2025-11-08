@@ -39,13 +39,13 @@ const Dropdown = (props: DropdownProps | DropdownPropsWithExpand) => {
   const [expanded, setExpanded] = useState(false);
   const [typedText, setTypedText] = useState('');
 
-  useEffect(()=>{
-    if (!props.data.map(item => item.key).includes(typedText)) {
-      setTypedText('');
-      setCurrentSelection({key: placeholderText || '', val: null});
-      onSelect(currentSelection, false);
-    }
-  }, [props.data]);
+  // useEffect(()=>{
+  //   if (!props.data.map(item => item.key).includes(typedText)) {
+  //     setTypedText('');
+  //     setCurrentSelection({key: placeholderText || '', val: null});
+  //     onSelect(currentSelection, false);
+  //   }
+  // }, [props.data]);
 
   if (expandLogic && expanded && currentExpanded !== name) setExpanded(false);
 

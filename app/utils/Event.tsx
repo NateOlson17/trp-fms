@@ -15,9 +15,7 @@ export default class Event {
     invoicePrice: number;
 
     gear: Gear[];
-    techs: Technician[];
-    techRates: number[];
-    techsPaid: boolean[];
+    techs: {tech: Technician, rate: number, paid: boolean}[];
 
     dateQuoted: string;
     dateConfirmed: string;
@@ -50,9 +48,7 @@ export default class Event {
         invoicePrice: number,
 
         gear: Gear[] | undefined,
-        techs: Technician[] | undefined,
-        techRates: number[] | undefined,
-        techsPaid: boolean[] | undefined,
+        techs: {tech: Technician, rate: number, paid: boolean}[] | undefined,
 
         dateQuoted: string,
         dateConfirmed: string,
@@ -84,9 +80,8 @@ export default class Event {
         this.invoicePrice = args.invoicePrice
 
         this.gear = args.gear ? args.gear.map(gearItem => new Gear(gearItem)) : [];
-        this.techs = args.techs ? args.techs.map(tech => new Technician(tech)) : [];
-        this.techRates = args.techRates || [];
-        this.techsPaid = args.techsPaid || [];
+        this.techs = args.techs ? args.techs : [];
+
 
         this.dateQuoted = args.dateQuoted;
         this.dateConfirmed = args.dateConfirmed;

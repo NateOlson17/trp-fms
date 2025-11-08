@@ -8,13 +8,13 @@ import Gear from '@/app/utils/Gear';
 
 import Radio from '@/app/components/Radio';
 
-import globalStyles, { COLORS, KeyVal, STD_OPTIONS } from '@/app/globals';
+import globalStyles, { COLORS, KeyVal, STD_OPTIONS, formatDate } from '@/app/globals';
 
 
 const TicketItem = ({ticket, onDelete}: {ticket: ServiceTicket, onDelete: () => void}) => (
   <View style={styles.ticketItem}>
     <View style={styles.ticketItemField}>
-      <Text style={styles.cardBubbleText}>{ticket.date}</Text>
+      <Text style={styles.cardBubbleText}>{formatDate(ticket.date)}</Text>
     </View>
     <View style={styles.ticketItemField}>
       <Text style={styles.cardBubbleText}>{ticket.location}</Text>
@@ -206,7 +206,7 @@ const GearCard = ({gearItem}: {gearItem: Gear}) => {
               <Text style={styles.cardBubbleText}>{gearItem.powerDraw}W</Text>
             </View>
             <View style={{...styles.cardBubble, height: 40}}>
-              <Text style={styles.cardBubbleText}>COST{'\n'}${gearItem.avgPurchaseCost}</Text>
+              <Text style={styles.cardBubbleText}>COST{'\n'}${Math.round(gearItem.avgPurchaseCost)}</Text>
             </View>
             <View style={{...styles.cardBubble, height: 40}}>
               <Text style={styles.cardBubbleText}>RENT{'\n'}${gearItem.rentalCost}</Text>

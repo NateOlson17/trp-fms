@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { FlatList, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 
-import globalStyles, { checkObjEqual, COLORS, KeyVal } from "@/app/globals";
+import { checkObjEqual, COLORS, KeyVal } from "@/app/globals";
 
 
 const Radio = ({data, onSelect, defaultOption, style}: {data: KeyVal[], onSelect: (option: KeyVal) => void, defaultOption: KeyVal, style?: ViewStyle}) => {
@@ -28,6 +28,7 @@ const Radio = ({data, onSelect, defaultOption, style}: {data: KeyVal[], onSelect
         }
         keyExtractor={option => option.key}
         horizontal
+        scrollEnabled={false}
       />
     </View>
   )

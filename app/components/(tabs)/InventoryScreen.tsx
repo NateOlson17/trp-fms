@@ -22,14 +22,14 @@ const filterGear = (arr: Gear[], filters: GearFilters, defaultFilters: GearFilte
     !applied(prop) || (num >= filters[prop].low && num <= filters[prop].high) //determine if filter is unapplied or (applied and value within filter)
   )
 
-  const dateInRange = (dateList: string[]) => ( //determine if filter is unapplied or (applied and value within filter)
+  const dateInRange = (dateList: Date[]) => ( //determine if filter is unapplied or (applied and value within filter)
     !applied('purchaseDate') || dateList.some(date => (
-      Date.parse(date) >= Date.parse(filters.purchaseDate.low) && Date.parse(date) <= Date.parse(filters.purchaseDate.high)
+      date >= filters.purchaseDate.low && date <= filters.purchaseDate.high
     ))
   )
 
   const serviceTicketsMatch = (tickets: ServiceTicket[]) => ( //determine if filter is applied or both serviceTicket statuses are shown or (item has service tickets and those with service tickets are shown) or (item does not have service tickets and items without service tickets are shown)
-    !applied('hasServiceTickets') || filters.hasServiceTickets === 'both' || (filters.hasServiceTickets === 'yes' && tickets.length) || (filters.hasServiceTickets === 'no' && !tickets.length)
+    !applied('hasServiceTickets') || filters.hasServiceTickets === 'ALL' || (filters.hasServiceTickets === 'Y' && tickets.length) || (filters.hasServiceTickets === 'N' && !tickets.length)
   )
 
   const locationsMatch = (locations: string[]) => (!applied('locations') || filters.locations.some(filterLoc => locations.includes(filterLoc))) //determine if filter is unapplied or some location filter matches any location of the item
@@ -42,7 +42,7 @@ const filterGear = (arr: Gear[], filters: GearFilters, defaultFilters: GearFilte
       numberInRange(gearItem.rentalCost, 'rentalCost') &&
       numberInRange(gearItem.powerDraw, 'powerDraw') &&
       numberInRange(gearItem.qtyOwned, 'qtyOwned') &&
-      dateInRange(gearItem.purchaseDates.map(item => item.date)) &&
+      dateInRange(gearItem.purchaseDates.map(item => new Date(item.date))) &&
       serviceTicketsMatch(gearItem.serviceTickets) &&
       locationsMatch(gearItem.locations.map(item => item.location))
     ))
@@ -52,7 +52,7 @@ const filterGear = (arr: Gear[], filters: GearFilters, defaultFilters: GearFilte
 
 
 const InventoryScreen = () => {
-  const gear = useContext(GearContext)
+  const gear = useContext(GearContext);
 
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [ticketModalVisible, setTicketModalVisible] = useState(false);
@@ -63,10 +63,10 @@ const InventoryScreen = () => {
 
   const defaultFilters = getDefaultGearFilters(gear);
   const [filters, setFilters] = useState<GearFilters>(defaultFilters);
+  const [filterModalKey, setFilterModalKey] = useState(0);
 
   const [searchShifted, setSearchShifted] = useState(false); //search bar shifts up when keyboard visible
   const searchShift = useAnimatedValue(0);
-
 
   return(
     <View style={globalStyles.screenWrapper}>
@@ -103,6 +103,12 @@ const InventoryScreen = () => {
                 maxLength={50}
                 selectionColor={COLORS.GOLD}
               />
+
+              {searchText && 
+                <TouchableOpacity onPress={() => setSearchText('')} style={styles.clearSearch}>
+                  <Ionicons name={'close-circle'} color={COLORS.LIGHT_GRAY} size={24}/>
+                </TouchableOpacity>
+              }
             </View>
 
             {!searchShifted &&
@@ -128,7 +134,7 @@ const InventoryScreen = () => {
 
       {addModalVisible && <AddGearModal gear={gear} onClose={() => setAddModalVisible(false)}/>}
       {ticketModalVisible && <AddTicketModal gear={gear} onClose={() => setTicketModalVisible(false)}/>}
-      {filterModalVisible && <FilterGearModal gear={gear} onSubmit={filters => setFilters(filters)} onClose={() => setFilterModalVisible(false)}/>}
+      {filterModalVisible && <FilterGearModal gear={gear} currFilters={filters} onClose={(newFilters) => {setFilterModalVisible(false); setFilters(newFilters);}} onReset={() => {setFilters(defaultFilters); setFilterModalKey(filterModalKey + 1)}} key={filterModalKey}/>}
     </View>
   )
 }
@@ -156,9 +162,16 @@ const styles = StyleSheet.create({
     ...globalStyles.border,
     backgroundColor: COLORS.BLACK,
     height: 40,
+    flexDirection: 'row',
     flex: 1,
     marginRight: 5,
     paddingLeft: 5
+  },
+
+  clearSearch: {
+    marginTop: 'auto',
+    marginBottom: 'auto',
+    marginRight: 10
   },
 
   actionButton: {

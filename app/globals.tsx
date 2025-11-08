@@ -24,8 +24,8 @@ export const STD_OPTIONS = {
 
 export type KeyVal<T = any> = {key: string, val: T}
 
-export const getCurrentDate = () => {
-  const date = new Date();
+export const formatDate = (dateStr: string) => {
+  const date = new Date(dateStr);
   return (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getFullYear().toString().slice(2)
 }
 

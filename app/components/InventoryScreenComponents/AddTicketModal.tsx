@@ -8,12 +8,12 @@ import Dropdown from '@/app/components/Dropdown';
 import GenericModal from '@/app/components/GenericModal';
 import Radio from '@/app/components/Radio';
 
-import globalStyles, { COLORS, getCurrentDate, KeyVal, STD_OPTIONS } from '@/app/globals';
+import globalStyles, { COLORS, KeyVal, STD_OPTIONS } from '@/app/globals';
 
 
 const AddTicketModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void}) => {
   const [newGearContainer, setNewGearContainer] = useState<keyof GearContainer>('' as keyof GearContainer)
-  const [newTicket, setNewTicket] = useState(new ServiceTicket({qty: 0, location: 'CO', date: getCurrentDate(), notes: ''}));
+  const [newTicket, setNewTicket] = useState(new ServiceTicket({qty: 0, location: 'CO', date: new Date().toString(), notes: ''}));
   const [gearItem, setGearItem] = useState({} as Gear)
   const [currentExpanded, setCurrentExpanded] = useState('')
 

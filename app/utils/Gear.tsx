@@ -2,7 +2,6 @@ import { push, ref, remove, set } from 'firebase/database';
 import rtdb from '@/app/rtdb_config';
 
 import ServiceTicket from '@/app/utils/ServiceTicket';
-import { getCurrentDate } from '@/app/globals';
 
 export type GearContainer = {
         infrastructure: Gear[];
@@ -80,7 +79,7 @@ export default class Gear {
         addQty = (qty: number, cost: number, location: string) => {
                 this.avgPurchaseCost = (this.qtyOwned * this.avgPurchaseCost + cost) / (this.qtyOwned + qty);
                 this.qtyOwned += qty;
-                this.purchaseDates.push({qty: qty, date: getCurrentDate()});
+                this.purchaseDates.push({qty: qty, date: new Date().toString()});
                 if (!this.locations.map(loc => loc.location).includes(location)) {
                         this.locations.push({qty: qty, location: location});
                 } else {
