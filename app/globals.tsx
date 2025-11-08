@@ -74,7 +74,8 @@ const globalStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginBottom: 20,
-    marginTop: 'auto'
+    marginTop: 'auto',
+    flex: 1
   }
 });
 

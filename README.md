@@ -14,14 +14,12 @@
 -Login via Technician object, pass user Technician object and online status as Context. Use this context to disable certain features. Set up firebase rules accordingly
 -Done key only appears on first AddModal call (selectionColor also resets) - create minimum reproducible example
 -Add Technician tab incl add/edit/filter button etc. options to generate 1099 etc.
--Make sure I'm using Setstate everywhere and not modifying directly
 
 ## INVENTORY SCREEN
 
 -Implement edit button on gearCard
 -Update DB content
--Add purchase dates to card
--dont allow selling/decommissioning of more than are available at a given location
+!-Add purchase dates to card
 
 ## EVENT SCREEN
 

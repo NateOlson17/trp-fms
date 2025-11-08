@@ -56,7 +56,11 @@ const DeleteView = ({gearItem, onClose}: {gearItem: Gear, onClose: () => void}) 
   const [deleteType, setDeleteType] = useState('DECOMISSIONED');
   const [deleteData, setDeleteData] = useState({qty: 0, price: 0, location: 'CO', notes: ''})
 
-  const validateSubmit = () => (deleteData.qty && deleteData.qty <= gearItem.qtyOwned && (deleteData.price || deleteType === 'DECOMISSIONED'))
+  const validateSubmit = () => {
+    let qtyAtLoc = 0;
+    gearItem.locations.forEach(loc => {if (loc.location == deleteData.location) qtyAtLoc = loc.qty;});
+    return (deleteData.qty && deleteData.qty <= qtyAtLoc && (deleteData.price || deleteType === 'DECOMISSIONED'));
+  }
 
   return (
     <View style={styles.ticketView}>
@@ -125,22 +129,51 @@ const DeleteView = ({gearItem, onClose}: {gearItem: Gear, onClose: () => void}) 
         />
       </View>
       <View style={globalStyles.modalExitButtons}>
-          <TouchableOpacity onPress={onClose}>
-            <Ionicons name={'close-circle'} color={COLORS.RED} size={50}/>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => {if (validateSubmit()) {onClose(); gearItem.deleteQty(deleteData.qty, deleteData.location);}}}>
-            <Ionicons name={'checkmark-circle'} color={validateSubmit() ? COLORS.GREEN : COLORS.LIGHT_GRAY} size={50}/>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity onPress={onClose}>
+          <Ionicons name={'close-circle'} color={COLORS.RED} size={50}/>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {if (validateSubmit()) {onClose(); gearItem.deleteQty(deleteData.qty, deleteData.location);}}}>
+          <Ionicons name={'checkmark-circle'} color={validateSubmit() ? COLORS.GREEN : COLORS.LIGHT_GRAY} size={50}/>
+        </TouchableOpacity>
+      </View>
     </View>
   )
 }
+
+const EditView = ({gearItem, onClose}: {gearItem: Gear, onClose: () => void}) => {
+  const validateSubmit = () => {return true;}
+  return (
+    <View style={styles.card}>
+      <View style={globalStyles.modalExitButtons}>
+        <TouchableOpacity onPress={onClose}>
+          <Ionicons name={'close-circle'} color={COLORS.RED} size={50}/>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {if (validateSubmit()) {onClose();}}}>
+          <Ionicons name={'checkmark-circle'} color={validateSubmit() ? COLORS.GREEN : COLORS.LIGHT_GRAY} size={50}/>
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
+}
+
+const HistoryView = ({gearItem, onClose}: {gearItem: Gear, onClose: () => void}) => {
+  return (
+    <View style={styles.card}>
+      <TouchableOpacity  onPress={onClose} style={{marginRight: 4, marginTop: 3, marginLeft: 'auto'}}>
+        <Ionicons name={'arrow-undo-outline'} color={COLORS.LIGHT_GRAY} size={40}/>
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+
 
 
 const GearCard = ({gearItem}: {gearItem: Gear}) => {
   const [ticketView, setTicketView] = useState(false);
   const [deleteView, setDeleteView] = useState(false);
   const [editView, setEditView] = useState(false);
+  const [historyView, setHistoryView] = useState(false);
 
   const numDamaged = gearItem.serviceTickets.reduce((total, {qty}) => total + qty, 0);
 
@@ -148,8 +181,10 @@ const GearCard = ({gearItem}: {gearItem: Gear}) => {
     <View>
       {ticketView && <TicketView gearItem={gearItem} onClose={() => setTicketView(false)}/>}
       {deleteView && <DeleteView gearItem={gearItem} onClose={() => setDeleteView(false)}/>}
+      {editView && <EditView gearItem={gearItem} onClose={() => setEditView(false)}/>}
+      {historyView && <HistoryView gearItem={gearItem} onClose={() => setHistoryView(false)}/>}
 
-      {!ticketView && !deleteView &&
+      {!ticketView && !deleteView && !editView && !historyView &&
         <View style={styles.card}>
           <View style={styles.cardLeftSideWrapper}>
             <View style={styles.cardName}>
@@ -194,11 +229,14 @@ const GearCard = ({gearItem}: {gearItem: Gear}) => {
 
           <View style={styles.cardRightSideWrapper}>
             <View style={styles.buttonContainer}>
+              <TouchableOpacity style={{alignSelf: 'center', marginLeft: 5}} onPress={() => setHistoryView(true)}>
+                <Ionicons name={'time-outline'} color={COLORS.GOLD} size={30}/>
+              </TouchableOpacity>
               <TouchableOpacity style={{alignSelf: 'center', marginLeft: 5}} onPress={() => setEditView(true)}>
                 <Ionicons name={'create-outline'} color={COLORS.GOLD} size={30}/>
               </TouchableOpacity>
               <TouchableOpacity style={{alignSelf: 'center', marginLeft: 5}} onPress={() => setDeleteView(true)}>
-                <Ionicons name={'trash-bin-outline'} color={COLORS.RED} size={30}/>
+                <Ionicons name={'trash-outline'} color={COLORS.RED} size={30}/>
               </TouchableOpacity>
             </View>
 
@@ -239,7 +277,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.GRAY,
     margin: 15,
     marginTop: 0,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    minHeight: 120
   },
 
   cardName: {
