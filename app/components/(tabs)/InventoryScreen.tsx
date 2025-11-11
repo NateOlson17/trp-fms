@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   },
 
   actionButtonBar: {
-    height: 120,
+    height: 123,
     flexDirection: 'row',
     justifyContent: 'space-between'
   },

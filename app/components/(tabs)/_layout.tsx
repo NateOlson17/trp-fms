@@ -97,6 +97,18 @@ export default function TabLayout() {
         />
 
         <Tabs.Screen 
+          name='LaborScreen' 
+          options={{
+            headerShown: false,
+            tabBarIcon: ({ focused, color }) => (
+              <View style={styles.tabIcon}>
+                <Ionicons name={focused ? 'person' : 'person-outline'} color={color} size={50} />
+              </View>
+            )
+          }}
+        />
+
+        <Tabs.Screen 
           name='FinanceScreen' 
           options={{
             headerShown: false,

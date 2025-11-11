@@ -140,31 +140,46 @@ const DeleteView = ({gearItem, onClose}: {gearItem: Gear, onClose: () => void}) 
   )
 }
 
-const EditView = ({gearItem, onClose}: {gearItem: Gear, onClose: () => void}) => {
-  const validateSubmit = () => {return true;}
-  return (
-    <View style={styles.card}>
-      <View style={globalStyles.modalExitButtons}>
-        <TouchableOpacity onPress={onClose}>
-          <Ionicons name={'close-circle'} color={COLORS.RED} size={50}/>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {if (validateSubmit()) {onClose();}}}>
-          <Ionicons name={'checkmark-circle'} color={validateSubmit() ? COLORS.GREEN : COLORS.LIGHT_GRAY} size={50}/>
-        </TouchableOpacity>
-      </View>
+const PurchaseItem = ({purchase}: {purchase: {qty: number, date: string, cost: number, location: string, notes: string}}) => (
+  <View style={styles.historyItem}>
+    <View style={styles.historyItemField}>
+      <Text style={styles.cardBubbleText}>{formatDate(purchase.date)}</Text>
     </View>
-  )
-}
+    <View style={styles.historyItemField}>
+      <Text style={styles.cardBubbleText}>{purchase.location}</Text>
+    </View>
+    <View style={{...styles.cardBubble, marginLeft: 5, marginTop: 'auto', marginBottom: 'auto'}}>
+      <Text style={styles.cardBubbleText}>{purchase.qty}</Text>
+    </View>
+    <View style={styles.historyItemField}>
+      <Text style={styles.cardBubbleText}>{`$${purchase.cost}`}</Text>
+    </View>
+    {purchase.notes &&
+      <View style={styles.historyItemField}>
+        <Text style={styles.cardBubbleText}>{purchase.notes}</Text>
+      </View>
+    }
+  </View>
+)
 
-const HistoryView = ({gearItem, onClose}: {gearItem: Gear, onClose: () => void}) => {
-  return (
-    <View style={styles.card}>
+const HistoryView = ({gearItem, onClose}: {gearItem: Gear, onClose: () => void}) => (
+  <View style={{...styles.card, flexDirection: 'column'}}>
+    <View style={{flexDirection: 'row'}}>
+      <View style={{...styles.cardName, marginBottom: 'auto'}}>
+        <Text style={{color: COLORS.WHITE}}>{gearItem.name}</Text>
+      </View>
       <TouchableOpacity  onPress={onClose} style={{marginRight: 4, marginTop: 3, marginLeft: 'auto'}}>
         <Ionicons name={'arrow-undo-outline'} color={COLORS.LIGHT_GRAY} size={40}/>
       </TouchableOpacity>
     </View>
-  )
-}
+    
+    <FlatList
+      data={gearItem.purchaseDates}
+      renderItem={({item}) => <PurchaseItem purchase={item}/>}
+      keyExtractor={(ticket, index) => index.toString()}
+    />
+  </View>
+)
 
 
 
@@ -181,7 +196,7 @@ const GearCard = ({gearItem}: {gearItem: Gear}) => {
     <View>
       {ticketView && <TicketView gearItem={gearItem} onClose={() => setTicketView(false)}/>}
       {deleteView && <DeleteView gearItem={gearItem} onClose={() => setDeleteView(false)}/>}
-      {editView && <EditView gearItem={gearItem} onClose={() => setEditView(false)}/>}
+      {/* {editView && <EditView gearItem={gearItem} onClose={() => setEditView(false)}/>} */}
       {historyView && <HistoryView gearItem={gearItem} onClose={() => setHistoryView(false)}/>}
 
       {!ticketView && !deleteView && !editView && !historyView &&
@@ -370,6 +385,24 @@ const styles = StyleSheet.create({
     marginTop: 'auto',
     marginBottom: 'auto'
   },
+
+  historyItem: {
+    flexDirection: 'row', 
+    alignContent: 'flex-start', 
+    width: 300,
+    marginBottom: 5
+  },
+
+  historyItemField: {
+    backgroundColor: COLORS.GOLD,
+    borderRadius: 10,
+    margin: 4,
+    padding: 5,
+    maxWidth: 170,
+    marginTop: 'auto',
+    marginBottom: 'auto'
+  },
+
   buttonContainer: {
     flexDirection: 'row',
     alignSelf: 'flex-start',

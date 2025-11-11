@@ -8,11 +8,12 @@ import AddEventModal from '@/app/components/CalendarScreenComponents/AddEventMod
 
 import globalStyles, { COLORS } from '@/app/globals';
 
-import { GearContext } from '@/app/components/(tabs)/_layout';
+import { GearContext, TechContext } from '@/app/components/(tabs)/_layout';
 
 
 const CalendarScreen = () => {
   const gear = useContext(GearContext);
+  const techs = useContext(TechContext);
 
   const [addModalVisible, setAddModalVisible] = useState(false);
 
@@ -43,7 +44,7 @@ const CalendarScreen = () => {
         <Ionicons name={'add-circle-outline'} color={COLORS.GOLD} size={100} />
       </TouchableOpacity>
 
-      {addModalVisible && <AddEventModal gear={gear} onClose={() => setAddModalVisible(false)} onSubmit={() => {console.log('SUBMITTED')}}/>}
+      {addModalVisible && <AddEventModal techs={techs} onClose={() => setAddModalVisible(false)}/>}
     </View>
   )
 }

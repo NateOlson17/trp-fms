@@ -122,27 +122,27 @@ const FilterGearModal = ({gear, onClose, currFilters, onReset}: {gear: GearConta
         <View>
           <Text style={styles.label}>AFTER</Text>
           <RNDateTimePicker 
-          value={new Date(filters.purchaseDate.low)}
-          onChange={(event, date) => {if (event.type == 'set') filters.purchaseDate.low = date as Date; checkForReset();}}
-          minimumDate={new Date(filters.purchaseDate.low)}
-          maximumDate={new Date(filters.purchaseDate.high)}
-          textColor={COLORS.GOLD}
-          accentColor={COLORS.GOLD}
-          themeVariant='dark'
-        />
+            value={new Date(filters.purchaseDate.low)}
+            onChange={(event, date) => {if (event.type == 'set') filters.purchaseDate.low = date as Date; checkForReset();}}
+            minimumDate={new Date(filters.purchaseDate.low)}
+            maximumDate={new Date(filters.purchaseDate.high)}
+            textColor={COLORS.GOLD}
+            accentColor={COLORS.GOLD}
+            themeVariant='dark'
+          />
         </View>
 
         <View>
           <Text style={styles.label}>BEFORE</Text>
           <RNDateTimePicker 
-          value={new Date(filters.purchaseDate.high)}
-          onChange={(event, date) => {if (event.type == 'set') filters.purchaseDate.high = date as Date; checkForReset();}}
-          minimumDate={new Date(filters.purchaseDate.low)}
-          maximumDate={new Date(filters.purchaseDate.high)}
-          textColor={COLORS.GOLD}
-          accentColor={COLORS.GOLD}
-          themeVariant='dark'
-        />
+            value={new Date(filters.purchaseDate.high)}
+            onChange={(event, date) => {if (event.type == 'set') filters.purchaseDate.high = date as Date; checkForReset();}}
+            minimumDate={new Date(filters.purchaseDate.low)}
+            maximumDate={new Date(filters.purchaseDate.high)}
+            textColor={COLORS.GOLD}
+            accentColor={COLORS.GOLD}
+            themeVariant='dark'
+          />
         </View>
       </View>
       {resetVisible &&

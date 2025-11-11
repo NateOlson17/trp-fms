@@ -15,7 +15,7 @@ const AddGearModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void
   const [newGearContainer, setNewGearContainer] = useState<keyof GearContainer>('' as keyof GearContainer);
   const [newGear, setNewGear] = useState<Partial<Gear> | undefined>(undefined);
   const [currentGear, setCurrentGear] = useState<Gear | undefined>(undefined);
-  const [addToCurrent, setAddToCurrent] = useState<{qty?: number, location?: string, cost?: number}>({});
+  const [addToCurrent, setAddToCurrent] = useState<{qty?: number, location?: string, cost?: number, notes?: string}>({});
 
   return (
     <GenericModal 
@@ -27,10 +27,10 @@ const AddGearModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void
             ...g,
             avgPurchaseCost: g.avgPurchaseCost / g.qtyOwned,
             locations: [{location: g.locations? g.locations[0].location : 'CO', qty: g.qtyOwned}],
-            purchaseDates: [{qty: g.qtyOwned, date: new Date().toString()}]
+            purchaseDates: [{qty: g.qtyOwned, date: new Date().toString(), cost: g.avgPurchaseCost, location: g.locations? g.locations[0].location : 'CO', notes: g.notes}]
           }).addToContainer(newGearContainer);
         } else {
-          currentGear?.addQty(addToCurrent.qty as number, addToCurrent.cost as number, addToCurrent.location || 'CO');
+          currentGear?.addQty(addToCurrent.qty as number, addToCurrent.cost as number, addToCurrent.location || 'CO', addToCurrent.notes || '');
         }
       }}
       submitValidated={newGear ? 
@@ -110,6 +110,22 @@ const AddGearModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void
             defaultOption={{key: 'CO', val: 'CO'}}
             style={{marginRight: 'auto', marginBottom: 'auto', marginLeft: 10, marginTop: 5}}
           />
+          <View style={globalStyles.modalField}>
+            <TextInput
+              style={{...globalStyles.textInput, minWidth: 200, minHeight: 30, marginRight: 'auto'}}
+              onChangeText={text => setAddToCurrent({...addToCurrent, notes: text})}
+              placeholder={'NOTES'}
+              placeholderTextColor={COLORS.LIGHT_GRAY}
+              returnKeyType={'done'}
+              returnKeyLabel={'done'}
+              contextMenuHidden
+              multiline
+              blurOnSubmit
+              keyboardAppearance={'dark'}
+              maxLength={500}
+              selectionColor={COLORS.GOLD}
+            />
+          </View>
         </View> 
       }
 
