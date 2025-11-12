@@ -6,14 +6,18 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { COLORS } from "@/app/globals";
 
 
-const GenericModal = (props: PropsWithChildren<{onClose: () => void}>) => (
+const BlankModal = (props: PropsWithChildren<{onClose: () => void, showReset: boolean, onReset: () => void}>) => (
   <Modal animationType="fade" transparent={true} onRequestClose={props.onClose}>
     <View style={styles.modal}>
         {props.children}
-
-        <TouchableOpacity  onPress={props.onClose} style={{marginRight: 4, marginTop: 'auto', marginBottom: 4}}>
-        <Ionicons name={'arrow-undo-outline'} color={COLORS.LIGHT_GRAY} size={50}/>
-      </TouchableOpacity>
+        <View style={{flexDirection: 'row', marginTop: 'auto', justifyContent: 'space-between'}}>
+          <TouchableOpacity onPress={props.onClose} style={{marginRight: 4, marginTop: 'auto', marginBottom: 4}}>
+            <Ionicons name={'arrow-undo-outline'} color={COLORS.LIGHT_GRAY} size={50}/>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={props.onReset}>
+            <Ionicons name={'refresh-outline'} color={COLORS.RED} size={50}/>
+          </TouchableOpacity>
+        </View>
     </View>
   </Modal> 
 )
@@ -32,4 +36,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default GenericModal;
+export default BlankModal;

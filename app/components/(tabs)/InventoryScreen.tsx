@@ -36,7 +36,7 @@ const filterGear = (arr: Gear[], filters: GearFilters, defaultFilters: GearFilte
 
   if (!searchText && checkObjEqual(filters, defaultFilters)) return arr; //pass unfiltered array if no filters or search applied
   return arr.filter(gearItem => (
-    (!searchText || (searchText && gearItem.name.includes(searchText))) && //pass items matching search text
+    (!searchText || gearItem.name.toUpperCase().includes(searchText.toUpperCase())) && //pass items matching search text
     (checkObjEqual(filters, defaultFilters) || ( //do not check filters if no filters are applied
       numberInRange(gearItem.avgPurchaseCost, 'avgPurchaseCost') &&
       numberInRange(gearItem.rentalCost, 'rentalCost') &&

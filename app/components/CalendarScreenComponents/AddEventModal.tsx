@@ -4,7 +4,6 @@ import { StyleSheet, View, Text, TextInput } from 'react-native';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 
 import Event from '@/app/utils/Event';
-import { GearContainer } from '@/app/utils/Gear';
 import Technician from '@/app/utils/Technician'
 
 import GenericModal from '@/app/components/GenericModal'

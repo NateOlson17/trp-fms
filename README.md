@@ -4,39 +4,38 @@
 
 ## GENERAL
 
--Update DB content
--Include units for TextInputs
--Use memo where applicable
--Label text boxes above box so it's clear what they are when filled for every TextInput
--Dropdown might not need an Effect (look at RN docs), figure out how to update when provided data changes (memo?)
+-useMemo?
 -Separate _layout useEffect hook by container, don't pull entire DB on change and make initial pull on splash screen for load times
 -Improve FlatList performance (<https://reactnative.dev/docs/optimizing-flatlist-configuration>)
 -Login via Technician object, pass user Technician object and online status as Context. Use this context to disable certain features. Set up firebase rules accordingly
 
 ## INVENTORY SCREEN
 
--Implement edit functionality
+-Edit
+-Update DB content
+-Add Gear: Label numerical TextInputs so it's clear what they are when filled and add units
+-Add Gear: Make ITEM dropdown clear when CATEGORY dropdown updates
+-Filter Gear: Reset button shows up unpredictably
 
 ## EVENT SCREEN
 
--Sorting/filtering
+-Search/filter
+-Edit
 -Display events on calendar
--Implement add event
--Add search feature
+-Show event screen
 
 ## LABOR SCREEN
 
--Create edit feature
--Create search/filter features
--Option to generate 1099 etc
+!-Add location for techs
+-Edit
+-Option to generate 1099
+-Outline tech in red if unpaid for anything. Show as numbered bubble much like ServiceTickets on gear card
 
 ## FINANCE SCREEN
 
--Purchase date/qty/cost for gear
--Income from Events
--Tab for receivable and payable
--Other income like gear sales
--Cost breakdown by event
--Sorting/filtering
--Add search
--timestamped transaction log
+-Color coded continuous log for:
+    Income from Events
+    Gear Purchases
+    Gear Sales
+-Show overall stats
+-Search/filter (money in/out)

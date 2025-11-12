@@ -65,7 +65,7 @@ const FilterGearModal = ({gear, onClose, currFilters, onReset}: {gear: GearConta
   const checkForReset = () => {if (checkObjEqual(filters, defaultFilters) == resetVisible) setResetVisible(!resetVisible);}
 
   return (
-    <BlankModal onClose={() => onClose(filters)}>
+    <BlankModal onClose={() => onClose(filters)} showReset={resetVisible} onReset={() => {onReset(); setResetVisible(false)}}>
       <Range
         name={'PURCHASE COST'}
         range={defaultFilters.avgPurchaseCost}
@@ -145,11 +145,6 @@ const FilterGearModal = ({gear, onClose, currFilters, onReset}: {gear: GearConta
           />
         </View>
       </View>
-      {resetVisible &&
-        <TouchableOpacity style={{marginLeft: 'auto', marginTop: 'auto'}} onPress={() => {onReset(); setResetVisible(false)}}>
-          <Ionicons name={'refresh-outline'} color={COLORS.RED} size={50}/>
-        </TouchableOpacity>
-      }
     </BlankModal>
   )
 }
