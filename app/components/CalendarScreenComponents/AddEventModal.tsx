@@ -15,7 +15,7 @@ const AddEventModal = ({techs, onClose}: {techs: Technician[], onClose: () => vo
   const [newEvent, setNewEvent] = useState<Partial<Event>>({startDate: (new Date()).toString(), endDate: (new Date()).toString()});
 
   return (
-    <GenericModal onClose={onClose} onSubmit={() => {console.log(newEvent); new Event(newEvent as Event).pushToDB()}} submitValidated={!!(newEvent.name && newEvent.client && newEvent.location && newEvent.manager && newEvent.contact && newEvent.contactInfo)}>
+    <GenericModal title='ADD EVENT' onClose={onClose} onSubmit={() => {console.log(newEvent); new Event(newEvent as Event).pushToDB()}} submitValidated={!!(newEvent.name && newEvent.client && newEvent.location && newEvent.manager && newEvent.contact && newEvent.contactInfo)}>
       <Dropdown
         data={techs.map(tech => ({key: tech.name, val: tech}))}
         onSelect={(item: KeyVal) => setNewEvent({...newEvent, manager: item.val})}

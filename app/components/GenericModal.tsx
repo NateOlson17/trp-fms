@@ -1,14 +1,15 @@
 import { PropsWithChildren } from "react";
-import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Modal, StyleSheet, TouchableOpacity, View, Text } from "react-native";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import globalStyles, { COLORS } from "@/app/globals";
 
 
-const GenericModal = (props: PropsWithChildren<{onClose: () => void, onSubmit: () => void, submitValidated: boolean}>) => (
+const GenericModal = (props: PropsWithChildren<{onClose: () => void, onSubmit: () => void, submitValidated: boolean, title: string}>) => (
   <Modal animationType="fade" transparent={true} onRequestClose={props.onClose}>
     <View style={styles.modal}>
+      <Text style={{...globalStyles.textInput, fontSize: 18, marginBottom: 10, marginTop: 5}}>{props.title}</Text>
         {props.children}
           
         <View style={globalStyles.modalExitButtons}>
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
     marginTop: 60,
     marginBottom: 170,
     flex: 1,
-    padding: 10
+    padding: 10,
   }
 });
 

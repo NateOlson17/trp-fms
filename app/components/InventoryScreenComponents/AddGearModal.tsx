@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TextInput, View } from "react-native";
+import { TextInput, View, Text } from "react-native";
 
 import Gear, { GearContainer } from "@/app/utils/Gear";
 
@@ -19,6 +19,7 @@ const AddGearModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void
 
   return (
     <GenericModal 
+      title='ADD GEAR ITEM'
       onClose={onClose} 
       onSubmit={() => {
         if (newGear) {
@@ -43,7 +44,7 @@ const AddGearModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void
         data={STD_OPTIONS.containers} 
         onSelect={(item: KeyVal<keyof GearContainer>) => setNewGearContainer(item.val)}
         placeholderText={'CATEGORY'}
-        style={globalStyles.dropdown}
+        style={{...globalStyles.dropdown, alignSelf: 'center'}}
         searchEnabled={false}
         expandLogic
         name={'CATEGORY'}
@@ -63,7 +64,7 @@ const AddGearModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void
           }
         }}
         placeholderText={'ITEM'}
-        style={globalStyles.dropdown}
+        style={{...globalStyles.dropdown, alignSelf: 'center'}}
         searchEnabled
         addEnabled
         expandLogic
@@ -73,46 +74,49 @@ const AddGearModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void
       />
 
       {currentGear &&
-        <View>
-          <View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize}}>
-            <TextInput
-              style={{...globalStyles.textInput, ...globalStyles.modalFieldSize}}
-              textAlign={'center'}
-              onChangeText={text => setAddToCurrent({...addToCurrent, qty: Number(text) || undefined})}
-              placeholder={'QTY'}
-              placeholderTextColor={COLORS.LIGHT_GRAY}
-              enterKeyHint={'done'}
-              contextMenuHidden
-              keyboardAppearance={'dark'}
-              keyboardType={'number-pad'}
-              maxLength={4}
-              selectionColor={COLORS.GOLD}
+        <View style={{alignItems: 'center'}}>
+          <View style={{flexDirection: 'row'}}>
+            <View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize}}>
+              <TextInput
+                style={{...globalStyles.textInput, ...globalStyles.modalFieldSize}}
+                textAlign={'center'}
+                onChangeText={text => setAddToCurrent({...addToCurrent, qty: Number(text) || undefined})}
+                placeholder={'QTY'}
+                placeholderTextColor={COLORS.LIGHT_GRAY}
+                enterKeyHint={'done'}
+                contextMenuHidden
+                keyboardAppearance={'dark'}
+                keyboardType={'number-pad'}
+                maxLength={4}
+                selectionColor={COLORS.GOLD}
+              />
+            </View>
+            <View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize}}>
+              <TextInput
+                style={{...globalStyles.textInput, ...globalStyles.modalFieldSize}}
+                textAlign={'center'}
+                onChangeText={text => setAddToCurrent({...addToCurrent, cost: text ? Number(text) : undefined})}
+                placeholder={'COST'}
+                placeholderTextColor={COLORS.LIGHT_GRAY}
+                enterKeyHint={'done'}
+                contextMenuHidden
+                keyboardAppearance={'dark'}
+                keyboardType={'number-pad'}
+                maxLength={6}
+                selectionColor={COLORS.GOLD}
+              />
+            </View>
+            <Radio
+              data={STD_OPTIONS.locations}
+              onSelect={(item: KeyVal<string>) => setAddToCurrent({...addToCurrent, location: item.val})}
+              defaultOption={{key: 'CO', val: 'CO'}}
+              style={{alignSelf: 'center', marginLeft: 10}}
             />
           </View>
-          <View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize}}>
-            <TextInput
-              style={{...globalStyles.textInput, ...globalStyles.modalFieldSize}}
-              textAlign={'center'}
-              onChangeText={text => setAddToCurrent({...addToCurrent, cost: text ? Number(text) : undefined})}
-              placeholder={'COST'}
-              placeholderTextColor={COLORS.LIGHT_GRAY}
-              enterKeyHint={'done'}
-              contextMenuHidden
-              keyboardAppearance={'dark'}
-              keyboardType={'number-pad'}
-              maxLength={6}
-              selectionColor={COLORS.GOLD}
-            />
-          </View>
-          <Radio
-            data={STD_OPTIONS.locations}
-            onSelect={(item: KeyVal<string>) => setAddToCurrent({...addToCurrent, location: item.val})}
-            defaultOption={{key: 'CO', val: 'CO'}}
-            style={{marginRight: 'auto', marginBottom: 'auto', marginLeft: 10, marginTop: 5}}
-          />
+          
           <View style={globalStyles.modalField}>
             <TextInput
-              style={{...globalStyles.textInput, minWidth: 200, minHeight: 30, marginRight: 'auto'}}
+              style={{...globalStyles.textInput, minWidth: 300, minHeight: 30}}
               onChangeText={text => setAddToCurrent({...addToCurrent, notes: text})}
               placeholder={'NOTES'}
               placeholderTextColor={COLORS.LIGHT_GRAY}
@@ -130,10 +134,10 @@ const AddGearModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void
       }
 
       {newGear &&
-        <View>
+        <View style={{alignItems: 'center'}}>
           <View style={globalStyles.modalField}>
             <TextInput
-                style={{...globalStyles.textInput, minWidth: 200, minHeight: 30, marginRight: 'auto'}}
+                style={{...globalStyles.textInput, minWidth: 300, minHeight: 30, marginRight: 'auto'}}
                 onChangeText={text => setNewGear({...newGear, includes: text.split(',').map(item => item.trim()).filter(item => item)})}
                 placeholder={'INCLUDES\n(comma between each item)'}
                 placeholderTextColor={COLORS.LIGHT_GRAY}
@@ -149,7 +153,7 @@ const AddGearModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void
           </View>
           <View style={globalStyles.modalField}>
             <TextInput
-              style={{...globalStyles.textInput, minWidth: 200, minHeight: 30, marginRight: 'auto'}}
+              style={{...globalStyles.textInput, minWidth: 300, minHeight: 30, marginRight: 'auto'}}
               onChangeText={text => setNewGear({...newGear, notes: text})}
               placeholder={'NOTES'}
               placeholderTextColor={COLORS.LIGHT_GRAY}
@@ -165,65 +169,80 @@ const AddGearModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void
           </View>
 
           <View style={{flexDirection: 'row'}}>
-            <View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize}}>
-              <TextInput
-                style={{...globalStyles.textInput, ...globalStyles.modalFieldSize}}
-                textAlign={'center'}
-                onChangeText={text => setNewGear({...newGear, avgPurchaseCost: text ? Number(text) : undefined})}
-                placeholder={'COST'}
-                placeholderTextColor={COLORS.LIGHT_GRAY}
-                enterKeyHint={'done'}
-                contextMenuHidden
-                keyboardAppearance={'dark'}
-                keyboardType={'number-pad'}
-                maxLength={6}
-                selectionColor={COLORS.GOLD}
-              />
+            <View>
+              <View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize}}>
+                <TextInput
+                  style={{...globalStyles.textInput, ...globalStyles.modalFieldSize}}
+                  textAlign={'center'}
+                  onChangeText={text => setNewGear({...newGear, avgPurchaseCost: text ? Number(text) : undefined})}
+                  placeholder={'COST'}
+                  placeholderTextColor={COLORS.LIGHT_GRAY}
+                  enterKeyHint={'done'}
+                  contextMenuHidden
+                  keyboardAppearance={'dark'}
+                  keyboardType={'number-pad'}
+                  maxLength={6}
+                  selectionColor={COLORS.GOLD}
+                />
+              </View>
+              <Text style={globalStyles.textInput}>COST ($)</Text>
             </View>
-            <View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize}}>
-              <TextInput
-                style={{...globalStyles.textInput, ...globalStyles.modalFieldSize}}
-                textAlign={'center'}
-                onChangeText={text => setNewGear({...newGear, rentalCost: text ? Number(text) : undefined})}
-                placeholder={'RENT'}
-                placeholderTextColor={COLORS.LIGHT_GRAY}
-                enterKeyHint={'done'}
-                contextMenuHidden
-                keyboardAppearance={'dark'}
-                keyboardType={'number-pad'}
-                maxLength={6}
-                selectionColor={COLORS.GOLD}
-              />
+            
+            <View>
+              <View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize}}>
+                <TextInput
+                  style={{...globalStyles.textInput, ...globalStyles.modalFieldSize}}
+                  textAlign={'center'}
+                  onChangeText={text => setNewGear({...newGear, rentalCost: text ? Number(text) : undefined})}
+                  placeholder={'RENT'}
+                  placeholderTextColor={COLORS.LIGHT_GRAY}
+                  enterKeyHint={'done'}
+                  contextMenuHidden
+                  keyboardAppearance={'dark'}
+                  keyboardType={'number-pad'}
+                  maxLength={6}
+                  selectionColor={COLORS.GOLD}
+                />
+              </View>
+              <Text style={globalStyles.textInput}>RENT ($)</Text>
             </View>
-            <View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize}}>
-              <TextInput
-                style={{...globalStyles.textInput, ...globalStyles.modalFieldSize}}
-                textAlign={'center'}
-                onChangeText={text => setNewGear({...newGear, powerDraw: text ? Number(text) : undefined})}
-                placeholder={'DRAW'}
-                placeholderTextColor={COLORS.LIGHT_GRAY}
-                enterKeyHint={'done'}
-                contextMenuHidden
-                keyboardAppearance={'dark'}
-                keyboardType={'number-pad'}
-                maxLength={6}
-                selectionColor={COLORS.GOLD}
-              />
+
+            <View>
+              <View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize}}>
+                <TextInput
+                  style={{...globalStyles.textInput, ...globalStyles.modalFieldSize}}
+                  textAlign={'center'}
+                  onChangeText={text => setNewGear({...newGear, powerDraw: text ? Number(text) : undefined})}
+                  placeholder={'DRAW'}
+                  placeholderTextColor={COLORS.LIGHT_GRAY}
+                  enterKeyHint={'done'}
+                  contextMenuHidden
+                  keyboardAppearance={'dark'}
+                  keyboardType={'number-pad'}
+                  maxLength={6}
+                  selectionColor={COLORS.GOLD}
+                />
+              </View>
+              <Text style={globalStyles.textInput}>DRAW (W)</Text>
             </View>
-            <View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize}}>
-              <TextInput
-                style={{...globalStyles.textInput, ...globalStyles.modalFieldSize}}
-                textAlign={'center'}
-                onChangeText={text => setNewGear({...newGear, qtyOwned: Number(text) || undefined})}
-                placeholder={'QTY'}
-                placeholderTextColor={COLORS.LIGHT_GRAY}
-                enterKeyHint={'done'}
-                contextMenuHidden
-                keyboardAppearance={'dark'}
-                keyboardType={'number-pad'}
-                maxLength={4}
-                selectionColor={COLORS.GOLD}
-              />
+
+            <View>
+              <View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize}}>
+                <TextInput
+                  style={{...globalStyles.textInput, ...globalStyles.modalFieldSize}}
+                  textAlign={'center'}
+                  onChangeText={text => setNewGear({...newGear, qtyOwned: Number(text) || undefined})}
+                  placeholder={'QTY'}
+                  placeholderTextColor={COLORS.LIGHT_GRAY}
+                  enterKeyHint={'done'}
+                  contextMenuHidden
+                  keyboardAppearance={'dark'}
+                  keyboardType={'number-pad'}
+                  maxLength={4}
+                  selectionColor={COLORS.GOLD}
+                />
+              </View>
+              <Text style={globalStyles.textInput}>QTY</Text>
             </View>
           </View>
 
@@ -231,7 +250,7 @@ const AddGearModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void
             data={STD_OPTIONS.locations}
             onSelect={(item: KeyVal<string>) => setNewGear({...newGear, locations: [{qty: 0, location: item.val}]})}
             defaultOption={{key: 'CO', val: 'CO'}}
-            style={{marginRight: 'auto', marginBottom: 'auto', marginLeft: 10, marginTop: 5}}
+            style={{marginTop: 15}}
           />
         </View>
       }

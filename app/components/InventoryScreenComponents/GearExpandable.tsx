@@ -40,7 +40,7 @@ const GearExpandable = ({data, name, currentExpanded, onExpand}: {data: Gear[], 
             />
           :
             <View style={styles.emptyView}>
-              <Text style={{color: COLORS.WHITE}}>NO MATCHES</Text>
+              <Text style={globalStyles.textInput}>NO MATCHES</Text>
             </View>
           }
         </Animated.View>

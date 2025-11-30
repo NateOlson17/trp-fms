@@ -7,13 +7,14 @@ import Technician from '@/app/utils/Technician'
 
 import GenericModal from '@/app/components/GenericModal'
 
-import globalStyles, { COLORS } from '@/app/globals';
+import globalStyles, { COLORS, STD_OPTIONS } from '@/app/globals';
+import Radio from '../Radio';
 
 const AddTechModal = ({onClose}: {onClose: () => void}) => {
-  const [newTech, setNewTech] = useState(new Technician({name: '', roles: {lx: 0, ax: 0, lsr: 0, vdo: 0}, contact: '', notes: '', key: ''}));
+  const [newTech, setNewTech] = useState(new Technician({name: '', roles: {lx: 0, ax: 0, lsr: 0, vdo: 0}, location: 'CO', contact: '', notes: '', key: ''}));
 
   return (
-    <GenericModal onClose={onClose} onSubmit={() => {(new Technician(newTech)).pushToDB();}} submitValidated={!!(newTech.name && newTech.contact)}>
+    <GenericModal title='ADD TECHNICIAN' onClose={onClose} onSubmit={() => {(new Technician(newTech)).pushToDB();}} submitValidated={!!(newTech.name && newTech.contact)}>
       <View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize, width: 160, alignSelf: 'center'}}>
         <TextInput
           style={{...globalStyles.textInput, ...globalStyles.modalFieldSize, marginRight: 'auto', width: 140}}
@@ -45,6 +46,13 @@ const AddTechModal = ({onClose}: {onClose: () => void}) => {
           selectionColor={COLORS.GOLD}
         />
       </View>
+
+			<Radio
+				data={STD_OPTIONS.locations}
+				defaultOption={{key: 'CO', val: 'CO'}}
+				onSelect={option => setNewTech({...newTech, location: option.val})}
+				style={{margin: 'auto'}}
+			/>	
 
 			<View style={styles.sliderContainer}>
 				<View style={styles.sliderWrapper}>

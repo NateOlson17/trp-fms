@@ -19,7 +19,7 @@ const AddTicketModal = ({gear, onClose}: {gear: GearContainer, onClose: () => vo
 
 
   return(
-    <GenericModal onClose={onClose} onSubmit={() => gearItem.addTicket(newTicket)} submitValidated={gearItem && newTicket.qty > 0 && newTicket.qty <= gearItem.qtyOwned}>
+    <GenericModal title='ADD SERVICE TICKET' onClose={onClose} onSubmit={() => gearItem.addTicket(newTicket)} submitValidated={gearItem && newTicket.qty > 0 && newTicket.qty <= gearItem.qtyOwned}>
       <View style={{flexDirection: 'row'}}>
         <Dropdown 
           data={STD_OPTIONS.containers} 

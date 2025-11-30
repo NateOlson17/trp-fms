@@ -33,6 +33,8 @@ export default class Event {
 	dateInvoiced: string | undefined;
 	datePaid: string | undefined;
 
+	ROD: {item: string, time: Date}[] | undefined;
+
 	subrentals: Cost[] | undefined;
 
 	otherCosts: Cost[] | undefined;
@@ -67,6 +69,8 @@ export default class Event {
 		dateInvoiced?: string,
 		datePaid?: string,
 
+		ROD?: {item: string, time: Date}[],
+
 		subrentals?: Cost[],
 
 		otherCosts?: Cost[],
@@ -99,6 +103,8 @@ export default class Event {
 		this.dateConfirmed = args.dateConfirmed;
 		this.dateInvoiced = args.dateInvoiced;
 		this.datePaid = args.datePaid; 
+
+		this.ROD = args.ROD;
 
 		this.subrentals = args.subrentals;
 

@@ -1,19 +1,28 @@
 import { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { View, StyleSheet, Text } from 'react-native';
 
 import Slider from '@react-native-assets/slider';
 
+import Radio from '@/app/components/Radio';
 import BlankModal from '@/app/components/BlankModal';
 
-import { checkObjEqual, COLORS } from '@/app/globals';
+import { checkObjEqual, COLORS, STD_OPTIONS } from '@/app/globals';
 
-const FilterTechsModal = ({onClose, currFilters}: {onClose: (filters: {lx: number, ax: number, lsr: number, vdo: number}) => void, currFilters: {lx: number, ax: number, lsr: number, vdo: number}}) => {
+export type TechFilters = {
+	lx: number;
+	ax: number;
+	lsr: number;
+	vdo: number;
+	location: string
+}
+
+export const getDefaultTechFilters = () => ({lx: 0, ax: 0, lsr: 0, vdo: 0, location: 'ALL'})
+
+const FilterTechsModal = ({onClose, currFilters}: {onClose: (filters: TechFilters) => void, currFilters: TechFilters}) => {
 	const [newFilters, setNewFilters] = useState(currFilters);
 
   return(
-    <BlankModal onClose={() => onClose(newFilters)} showReset={!checkObjEqual(newFilters, {lx: 0, ax: 0, lsr: 0, vdo: 0})} onReset={() => setNewFilters({lx: 0, ax: 0, lsr: 0, vdo: 0})}>
+    <BlankModal onClose={() => onClose(newFilters)} showReset={!checkObjEqual(newFilters, getDefaultTechFilters())} onReset={() => setNewFilters(getDefaultTechFilters())}>
       <View style={styles.sliderContainer}>
 				<View style={styles.sliderWrapper}>
 					<Slider
@@ -103,6 +112,13 @@ const FilterTechsModal = ({onClose, currFilters}: {onClose: (filters: {lx: numbe
 					</View>
 				</View>
 			</View>
+			
+			<Radio
+				data={[...STD_OPTIONS.locations, {key: 'ALL', val: 'ALL'}]}
+				defaultOption={{key: currFilters.location, val: currFilters.location}}
+				onSelect={option => setNewFilters({...newFilters, location: option.val})}
+				style={{marginTop: 20, alignSelf: 'center'}}
+			/>
 		</BlankModal>
   );
 }
