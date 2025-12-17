@@ -5,17 +5,41 @@ import { CalendarList } from 'react-native-calendars';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import AddEventModal from '@/app/components/CalendarScreenComponents/AddEventModal';
+import EventDetail from '@/app/components/CalendarScreenComponents/EventDetail';
 
-import globalStyles, { COLORS } from '@/app/globals';
+import globalStyles, { COLORS, dateToLocalTrunc } from '@/app/globals';
 
-import { GearContext, TechContext } from '@/app/components/(tabs)/_layout';
+import { EventContext, GearContext, TechContext } from '@/app/components/(tabs)/_layout';
+import { STATUS } from '@/app/utils/Event';
 
 
 const CalendarScreen = () => {
   const gear = useContext(GearContext);
+  const events = useContext(EventContext);
   const techs = useContext(TechContext);
 
+  const getEventDates = () => {
+    let newEventDates: any[] = [];
+
+    events.forEach(e => {
+      newEventDates.push([new Date(dateToLocalTrunc(e.startDate)).toISOString().slice(0, 10), {startingDay: true, endingDay: dateToLocalTrunc(e.startDate) == dateToLocalTrunc(e.endDate), color: e.status.color, textColor: e.status == STATUS.OUTBOUNDED ? COLORS.BLACK : null}]);
+      if (dateToLocalTrunc(e.startDate) != dateToLocalTrunc(e.endDate)) {
+        let iterDate = e.startDate + (1000 * 60 * 60 * 24);
+        while (dateToLocalTrunc(iterDate) < dateToLocalTrunc(e.endDate)) {
+          newEventDates.push([new Date(dateToLocalTrunc(iterDate)).toISOString().slice(0, 10), {color: e.status.color, textColor: e.status == STATUS.OUTBOUNDED ? COLORS.BLACK : null}]);
+          iterDate += (1000 * 60 * 60 * 24);
+        }
+        newEventDates.push([new Date(dateToLocalTrunc(e.endDate)).toISOString().slice(0, 10), {endingDay: true, color: e.status.color, textColor: e.status == STATUS.OUTBOUNDED ? COLORS.BLACK : null}]);
+      }
+    });
+
+    return Object.fromEntries(newEventDates);
+  }
+
   const [addModalVisible, setAddModalVisible] = useState(false);
+  const [eventDetailVisible, setEventDetailVisible] = useState(false);
+  const [eventDates, setEventDates] = useState(getEventDates());
+  const [currentDate, setCurrentDate] = useState(new Date().getTime());
 
 
   return(
@@ -30,21 +54,22 @@ const CalendarScreen = () => {
           calendarBackground: COLORS.BLACK, 
           textSectionTitleColor: COLORS.GOLD,
           dayTextColor: COLORS.WHITE,
-          todayTextColor: COLORS.GOLD,
-          dotColor: COLORS.GOLD,
+          todayTextColor: COLORS.WHITE,
           monthTextColor: COLORS.GOLD
         }}
-        renderHeader={date => {let dateObj = new Date(date); return <Text style={styles.headerText}>{dateObj.toLocaleString('en-EN', {month: 'long', year: 'numeric'})}</Text>}}
-        markingType='custom'
-        markedDates={{}}
-        onDayPress={day => {console.log(day);}}
+        renderHeader={date => <Text style={styles.headerText}>{new Date(date).toLocaleString('en-EN', {month: 'long', year: 'numeric'})}</Text>}
+        markingType='period'
+        markedDates={eventDates}
+        onDayPress={day => {setCurrentDate(day.timestamp); if (events.filter(e => dateToLocalTrunc(e.startDate) <= currentDate && currentDate <= dateToLocalTrunc(e.endDate)).length) setEventDetailVisible(true);}}
       />
+
+      {eventDetailVisible && <EventDetail currDate={currentDate} events={events.filter(e => dateToLocalTrunc(e.startDate) <= currentDate && currentDate <= dateToLocalTrunc(e.endDate))} techs={techs} gear={gear} onClose={() => setEventDetailVisible(false)}/>}
 
       <TouchableOpacity onPress={() => setAddModalVisible(true)} style={styles.addButton}>
         <Ionicons name={'add-circle-outline'} color={COLORS.GOLD} size={100} />
       </TouchableOpacity>
 
-      {addModalVisible && <AddEventModal techs={techs} onClose={() => setAddModalVisible(false)}/>}
+      {addModalVisible && <AddEventModal techs={techs} onClose={() => {setAddModalVisible(false); setEventDates(getEventDates())}}/>}
     </View>
   )
 }

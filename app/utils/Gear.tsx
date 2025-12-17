@@ -18,7 +18,7 @@ export default class Gear {
                 number | 
                 string[] | 
                 ServiceTicket[] | 
-                {qty: number, date: string}[] | 
+                {qty: number, date: number}[] | 
                 {qty: number, location: string}[] | 
                 ((ticket: ServiceTicket) => void) | 
                 ((qty: number, cost: number, location: string, notes: string) => void) | 
@@ -32,7 +32,7 @@ export default class Gear {
         qtyOwned: number;
         serviceTickets: ServiceTicket[];
         notes: string;
-        purchaseDates: {qty: number, date: string, cost: number, location: string, notes: string}[];
+        purchaseDates: {qty: number, date: number, cost: number, location: string, notes: string}[];
         locations: {qty: number, location: string}[];
         key: string;
 
@@ -45,7 +45,7 @@ export default class Gear {
                 qtyOwned: number,
                 serviceTickets: ServiceTicket[] | undefined,
                 notes: string | undefined,
-                purchaseDates: {qty: number, date: string, cost: number, location: string, notes: string}[],
+                purchaseDates: {qty: number, date: number, cost: number, location: string, notes: string}[],
                 locations: {qty: number, location: string}[],
                 key: string | undefined
         }) {
@@ -79,7 +79,7 @@ export default class Gear {
         addQty = (qty: number, cost: number, location: string, notes: string) => {
                 this.avgPurchaseCost = (this.qtyOwned * this.avgPurchaseCost + cost) / (this.qtyOwned + qty);
                 this.qtyOwned += qty;
-                this.purchaseDates.push({qty: qty, date: new Date().toString(), cost: cost, location: location, notes: notes});
+                this.purchaseDates.push({qty: qty, date: new Date().getTime(), cost: cost, location: location, notes: notes});
                 if (!this.locations.map(loc => loc.location).includes(location)) {
                         this.locations.push({qty: qty, location: location});
                 } else {

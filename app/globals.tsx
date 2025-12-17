@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
 export enum COLORS {
     BLACK = '#141414',
@@ -8,7 +8,8 @@ export enum COLORS {
     WEAK_BROWN = '#6e4702',
     RED = '#721918',
     GREEN = '#447053',
-    LIGHT_GRAY = '#808381'
+    LIGHT_GRAY = '#808381',
+    YELLOW='#e1ad01'
 }
 
 export const STD_OPTIONS = {
@@ -24,10 +25,17 @@ export const STD_OPTIONS = {
 
 export type KeyVal<T = any> = {key: string, val: T}
 
-export const formatDate = (dateStr: string) => {
-  const date = new Date(dateStr);
-  return (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getFullYear().toString().slice(2)
+export const formatDate = (timestamp: number) => {
+  const date = new Date(timestamp);
+  return (date.getUTCMonth() + 1) + '-' + date.getUTCDate() + '-' + date.getUTCFullYear().toString().slice(2)
 }
+
+export const dateToLocalTrunc = (timestamp: number) => {
+  const offset = new Date(timestamp).getTimezoneOffset() * 60 * 1000
+  const localDate = new Date(timestamp - offset);
+  localDate.setHours(0, 0, 0, 0);
+  return localDate.getTime() - offset;
+};
 
 export const checkObjEqual = (obj1: object, obj2: object) => (JSON.stringify(obj1) === JSON.stringify(obj2))
 

@@ -12,10 +12,10 @@ import Dropdown from '@/app/components/Dropdown';
 import globalStyles, { COLORS, KeyVal } from '@/app/globals';
 
 const AddEventModal = ({techs, onClose}: {techs: Technician[], onClose: () => void}) => {
-  const [newEvent, setNewEvent] = useState<Partial<Event>>({startDate: (new Date()).toString(), endDate: (new Date()).toString()});
+  const [newEvent, setNewEvent] = useState<Partial<Event>>({startDate: new Date().getTime(), endDate: new Date().getTime()});
 
   return (
-    <GenericModal title='ADD EVENT' onClose={onClose} onSubmit={() => {console.log(newEvent); new Event(newEvent as Event).pushToDB()}} submitValidated={!!(newEvent.name && newEvent.client && newEvent.location && newEvent.manager && newEvent.contact && newEvent.contactInfo)}>
+    <GenericModal title='ADD EVENT' onClose={onClose} onSubmit={() => {new Event(newEvent as Event).pushToDB()}} submitValidated={!!(newEvent.name && newEvent.client && newEvent.location && newEvent.manager && newEvent.contact && newEvent.contactInfo)}>
       <Dropdown
         data={techs.map(tech => ({key: tech.name, val: tech}))}
         onSelect={(item: KeyVal) => setNewEvent({...newEvent, manager: item.val})}
@@ -109,8 +109,8 @@ const AddEventModal = ({techs, onClose}: {techs: Technician[], onClose: () => vo
         <View>
           <Text style={styles.label}>START</Text>
           <RNDateTimePicker
-            value={new Date()}
-            onChange={(event, date) => {if (event.type == 'set') setNewEvent({...newEvent, startDate: (date as Date).toString()})}}
+            value={new Date(newEvent.startDate as number)}
+            onChange={(event, date) => {if (event.type == 'set' && date) setNewEvent({...newEvent, startDate: date.getTime()})}}
             textColor={COLORS.GOLD}
             accentColor={COLORS.GOLD}
             themeVariant='dark'
@@ -119,8 +119,8 @@ const AddEventModal = ({techs, onClose}: {techs: Technician[], onClose: () => vo
         <View>
           <Text style={styles.label}>END</Text>
           <RNDateTimePicker 
-            value={new Date()}
-            onChange={(event, date) => {if (event.type == 'set') setNewEvent({...newEvent, endDate: (date as Date).toString()})}}
+            value={new Date(newEvent.endDate as number)}
+            onChange={(event, date) => {if (event.type == 'set' && date) setNewEvent({...newEvent, endDate: date.getTime()})}}
             textColor={COLORS.GOLD}
             accentColor={COLORS.GOLD}
             themeVariant='dark'

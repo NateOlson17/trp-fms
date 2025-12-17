@@ -1,12 +1,12 @@
 export default class ServiceTicket {
     qty: number;
-    date: string;
+    date: number;
     location: string;
     notes: string;
 
     constructor(args: {
         qty: number,
-        date: string,
+        date: number,
         location: string,
         notes: string
     }) {

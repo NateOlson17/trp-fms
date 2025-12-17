@@ -140,7 +140,7 @@ const DeleteView = ({gearItem, onClose}: {gearItem: Gear, onClose: () => void}) 
   )
 }
 
-const PurchaseItem = ({purchase}: {purchase: {qty: number, date: string, cost: number, location: string, notes: string}}) => (
+const PurchaseItem = ({purchase}: {purchase: {qty: number, date: number, cost: number, location: string, notes: string}}) => (
   <View style={styles.historyItem}>
     <View style={styles.historyItemField}>
       <Text style={styles.cardBubbleText}>{formatDate(purchase.date)}</Text>

@@ -1,13 +1,13 @@
-import { PropsWithChildren } from "react";
-import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import { PropsWithChildren } from 'react';
+import { Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import Ionicons from "@expo/vector-icons/Ionicons";
+import Ionicons from '@expo/vector-icons/Ionicons';
 
-import { COLORS } from "@/app/globals";
+import { COLORS } from '@/app/globals';
 
 
 const BlankModal = (props: PropsWithChildren<{onClose: () => void, showReset: boolean, onReset: () => void}>) => (
-  <Modal animationType="fade" transparent={true} onRequestClose={props.onClose}>
+  <Modal animationType='fade' transparent={true} onRequestClose={props.onClose}>
     <View style={styles.modal}>
         {props.children}
         <View style={{flexDirection: 'row', marginTop: 'auto', justifyContent: 'space-between'}}>

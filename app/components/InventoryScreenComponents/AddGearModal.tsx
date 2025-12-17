@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { TextInput, View, Text } from "react-native";
+import { useState } from 'react';
+import { TextInput, View, Text } from 'react-native';
 
-import Gear, { GearContainer } from "@/app/utils/Gear";
+import Gear, { GearContainer } from '@/app/utils/Gear';
 
-import GenericModal from "@/app/components/GenericModal"
-import Dropdown from "@/app/components/Dropdown";
+import GenericModal from '@/app/components/GenericModal'
+import Dropdown from '@/app/components/Dropdown';
 
-import globalStyles, { COLORS, KeyVal, STD_OPTIONS } from "@/app/globals";
-import Radio from "@/app/components/Radio";
+import globalStyles, { COLORS, KeyVal, STD_OPTIONS } from '@/app/globals';
+import Radio from '@/app/components/Radio';
 
 
 const AddGearModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void}) => {
@@ -28,7 +28,7 @@ const AddGearModal = ({gear, onClose}: {gear: GearContainer, onClose: () => void
             ...g,
             avgPurchaseCost: g.avgPurchaseCost / g.qtyOwned,
             locations: [{location: g.locations? g.locations[0].location : 'CO', qty: g.qtyOwned}],
-            purchaseDates: [{qty: g.qtyOwned, date: new Date().toString(), cost: g.avgPurchaseCost, location: g.locations? g.locations[0].location : 'CO', notes: g.notes}]
+            purchaseDates: [{qty: g.qtyOwned, date: new Date().getTime(), cost: g.avgPurchaseCost, location: g.locations? g.locations[0].location : 'CO', notes: g.notes}]
           }).addToContainer(newGearContainer);
         } else {
           currentGear?.addQty(addToCurrent.qty as number, addToCurrent.cost as number, addToCurrent.location || 'CO', addToCurrent.notes || '');

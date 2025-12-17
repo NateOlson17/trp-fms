@@ -2,14 +2,13 @@ import { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import Ionicons from '@expo/vector-icons/Ionicons';
 
 import BlankModal from '@/app/components/BlankModal';
 import Range from '@/app/components/Range';
 import Radio from '@/app/components/Radio';
 import Checkbox from '@/app/components/Checkbox';
 
-import { COLORS, STD_OPTIONS, KeyVal, checkObjEqual } from '@/app/globals';
+import { COLORS, STD_OPTIONS, KeyVal, checkObjEqual, dateToLocalTrunc } from '@/app/globals';
 
 import { GearContainer } from '@/app/utils/Gear';
 
@@ -19,7 +18,7 @@ export type GearFilters = {
   powerDraw: {low: number, high: number};
   qtyOwned: {low: number, high: number};
   hasServiceTickets: 'Y' | 'N' | 'ALL';
-  purchaseDate: {low: Date, high: Date};
+  purchaseDate: {low: number, high: number};
   locations: string[];
 }
 
@@ -29,8 +28,8 @@ export const getDefaultGearFilters = (gear: GearContainer): GearFilters => {
   let maxRentalCost = 0;
   let maxPowerDraw = 0;
   let maxQtyOwned = 1;
-  let minDate = new Date(2100, 0, 1);
-  let maxDate = new Date(0);
+  let minDate = Number.MAX_VALUE;
+  let maxDate = 0;
   Object.keys(gear).forEach(key => {gear[key as keyof GearContainer].forEach(gearItem => {
     if (gearItem.avgPurchaseCost < minPurchaseCost) minPurchaseCost = Math.floor(gearItem.avgPurchaseCost);
     if (gearItem.avgPurchaseCost > maxPurchaseCost) maxPurchaseCost = Math.ceil(gearItem.avgPurchaseCost);
@@ -38,8 +37,8 @@ export const getDefaultGearFilters = (gear: GearContainer): GearFilters => {
     if (gearItem.powerDraw > maxPowerDraw) maxPowerDraw = gearItem.powerDraw;
     if (gearItem.qtyOwned > maxQtyOwned) maxQtyOwned = gearItem.qtyOwned;
     gearItem.purchaseDates.forEach(item => {
-      if (new Date(item.date) > maxDate) maxDate = new Date(item.date);
-      if (new Date(item.date) < minDate) minDate = new Date(item.date);
+      if (dateToLocalTrunc(item.date) > dateToLocalTrunc(maxDate)) maxDate = item.date;
+      if (dateToLocalTrunc(item.date) < dateToLocalTrunc(minDate)) minDate = item.date;
     })
   })});
 
@@ -123,7 +122,7 @@ const FilterGearModal = ({gear, onClose, currFilters, onReset}: {gear: GearConta
           <Text style={styles.label}>AFTER</Text>
           <RNDateTimePicker 
             value={new Date(filters.purchaseDate.low)}
-            onChange={(event, date) => {if (event.type == 'set') filters.purchaseDate.low = date as Date; checkForReset();}}
+            onChange={(event, date) => {if (event.type == 'set' && date) filters.purchaseDate.low = date.getTime(); checkForReset();}}
             minimumDate={new Date(filters.purchaseDate.low)}
             maximumDate={new Date(filters.purchaseDate.high)}
             textColor={COLORS.GOLD}
@@ -136,7 +135,7 @@ const FilterGearModal = ({gear, onClose, currFilters, onReset}: {gear: GearConta
           <Text style={styles.label}>BEFORE</Text>
           <RNDateTimePicker 
             value={new Date(filters.purchaseDate.high)}
-            onChange={(event, date) => {if (event.type == 'set') filters.purchaseDate.high = date as Date; checkForReset();}}
+            onChange={(event, date) => {if (event.type == 'set' && date) filters.purchaseDate.high = date.getTime(); checkForReset();}}
             minimumDate={new Date(filters.purchaseDate.low)}
             maximumDate={new Date(filters.purchaseDate.high)}
             textColor={COLORS.GOLD}

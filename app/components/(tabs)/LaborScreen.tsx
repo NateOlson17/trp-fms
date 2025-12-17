@@ -7,7 +7,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Technician from '@/app/utils/Technician';
 
 import AddTechModal from '@/app/components/LaborScreenComponents/AddTechModal';
-import FilterTechsModal, { getDefaultTechFilters, TechFilters } from '../LaborScreenComponents/FilterTechsModal';
+import FilterTechsModal, { getDefaultTechFilters, TechFilters } from '@/app/components/LaborScreenComponents/FilterTechsModal';
 
 import globalStyles, { COLORS, checkObjEqual } from '@/app/globals';
 

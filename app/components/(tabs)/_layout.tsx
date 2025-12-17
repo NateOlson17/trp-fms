@@ -1,5 +1,5 @@
 import React, { useEffect, useState, createContext } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { Tabs } from 'expo-router';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -23,6 +23,8 @@ export default function TabLayout() {
   const [events, setEvents] = useState<Event[]>([]);
   const [techs, setTechs] = useState<Technician[]>([]);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const gearRef = ref(rtdb, 'GearContainer'); //create reference to firebase rtdb at master gear container
     onValue(gearRef, snapshot => {
@@ -35,7 +37,7 @@ export default function TabLayout() {
           });
         });
         setGear(tempGear);
-      } else {console.log('USER OFFLINE');}
+      } else {console.log('GEAR OFFLINE');}
     });
     
     const techRef = ref(rtdb, 'TechnicianContainer'); //create reference to firebase rtdb at tech container
@@ -46,7 +48,7 @@ export default function TabLayout() {
           tempTechs.push(new Technician({...tech.val(), key: tech.key})); //create new Technician with DB data
         });
         setTechs(tempTechs);
-      } else {console.log('USER OFFLINE');}
+      } else {console.log('TECHS OFFLINE');}
     });
 
     const eventRef = ref(rtdb, 'EventContainer'); //create reference to firebase rtdb at event container
@@ -57,70 +59,78 @@ export default function TabLayout() {
           tempEvents.push(new Event({...event.val(), key: event.key})); //create new event for each item in DB container
         });
         setEvents(tempEvents);
-      } else {console.log('USER OFFLINE');}
+      } else {console.log('EVENTS OFFLINE');}
     });
+
+    setTimeout(() => setLoading(false), 2000)
   }, []); 
   
   return (
     <GearContext.Provider value={gear}>
     <TechContext.Provider value={techs}>
     <EventContext.Provider value={events}>
-      <Tabs screenOptions={{
-        tabBarActiveTintColor: COLORS.GOLD,
-        tabBarInactiveTintColor: COLORS.WEAK_BROWN,
-        tabBarStyle: {backgroundColor: COLORS.BLACK, height: 150},
-        tabBarShowLabel: false
-      }}>
-      
-        <Tabs.Screen
-          name='InventoryScreen' 
-          options={{
-            headerShown: false,
-            tabBarIcon: ({ focused, color }) => (
-              <View style={styles.tabIcon}>
-                <Ionicons name={focused ? 'construct' : 'construct-outline'} color={color} size={50} />
-              </View>
-            )
-          }}
-        />
-                
-        <Tabs.Screen 
-          name='CalendarScreen' 
-          options={{
-            headerShown: false,
-            tabBarIcon: ({ focused, color }) => (
-              <View style={styles.tabIcon}>
-                <Ionicons name={focused ? 'calendar' : 'calendar-outline'} color={color} size={50} />
-              </View>
-            )
-          }}
-        />
-
-        <Tabs.Screen 
-          name='LaborScreen' 
-          options={{
-            headerShown: false,
-            tabBarIcon: ({ focused, color }) => (
-              <View style={styles.tabIcon}>
-                <Ionicons name={focused ? 'person' : 'person-outline'} color={color} size={50} />
-              </View>
-            )
-          }}
-        />
-
-        <Tabs.Screen 
-          name='FinanceScreen' 
-          options={{
-            headerShown: false,
-            tabBarIcon: ({ focused, color }) => (
-              <View style={styles.tabIcon}>
-                <Ionicons name={focused ? 'cash' : 'cash-outline'} color={color} size={50} />
-              </View>
-            )
-          }}
-        />
+      {loading ?
+        <View style={{flex: 1, backgroundColor: COLORS.BLACK, alignContent: 'center', justifyContent: 'center'}}>
+          <ActivityIndicator size='large' color={COLORS.GOLD}/>
+        </View>
+      :
+        <Tabs screenOptions={{
+          tabBarActiveTintColor: COLORS.GOLD,
+          tabBarInactiveTintColor: COLORS.WEAK_BROWN,
+          tabBarStyle: {backgroundColor: COLORS.BLACK, height: 150},
+          tabBarShowLabel: false
+        }}>
         
-      </Tabs>
+          <Tabs.Screen
+            name='InventoryScreen' 
+            options={{
+              headerShown: false,
+              tabBarIcon: ({ focused, color }) => (
+                <View style={styles.tabIcon}>
+                  <Ionicons name={focused ? 'construct' : 'construct-outline'} color={color} size={50} />
+                </View>
+              )
+            }}
+          />
+                  
+          <Tabs.Screen 
+            name='CalendarScreen' 
+            options={{
+              headerShown: false,
+              tabBarIcon: ({ focused, color }) => (
+                <View style={styles.tabIcon}>
+                  <Ionicons name={focused ? 'calendar' : 'calendar-outline'} color={color} size={50} />
+                </View>
+              )
+            }}
+          />
+
+          <Tabs.Screen 
+            name='LaborScreen' 
+            options={{
+              headerShown: false,
+              tabBarIcon: ({ focused, color }) => (
+                <View style={styles.tabIcon}>
+                  <Ionicons name={focused ? 'person' : 'person-outline'} color={color} size={50} />
+                </View>
+              )
+            }}
+          />
+
+          <Tabs.Screen 
+            name='FinanceScreen' 
+            options={{
+              headerShown: false,
+              tabBarIcon: ({ focused, color }) => (
+                <View style={styles.tabIcon}>
+                  <Ionicons name={focused ? 'cash' : 'cash-outline'} color={color} size={50} />
+                </View>
+              )
+            }}
+          />
+          
+        </Tabs>
+      }
     </EventContext.Provider>
     </TechContext.Provider>
     </GearContext.Provider>    

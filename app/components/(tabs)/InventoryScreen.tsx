@@ -11,7 +11,7 @@ import AddGearModal from '@/app/components/InventoryScreenComponents/AddGearModa
 import AddTicketModal from '@/app/components/InventoryScreenComponents/AddTicketModal';
 import FilterGearModal, { getDefaultGearFilters, GearFilters } from '@/app/components/InventoryScreenComponents/FilterGearModal';
 
-import globalStyles, { checkObjEqual, COLORS } from '@/app/globals';
+import globalStyles, { checkObjEqual, COLORS, dateToLocalTrunc } from '@/app/globals';
 
 import { GearContext } from '@/app/components/(tabs)/_layout';
 
@@ -22,9 +22,9 @@ const filterGear = (arr: Gear[], filters: GearFilters, defaultFilters: GearFilte
     !applied(prop) || (num >= filters[prop].low && num <= filters[prop].high) //determine if filter is unapplied or (applied and value within filter)
   )
 
-  const dateInRange = (dateList: Date[]) => ( //determine if filter is unapplied or (applied and value within filter)
+  const dateInRange = (dateList: number[]) => ( //determine if filter is unapplied or (applied and value within filter)
     !applied('purchaseDate') || dateList.some(date => (
-      date >= filters.purchaseDate.low && date <= filters.purchaseDate.high
+      dateToLocalTrunc(date) >= dateToLocalTrunc(filters.purchaseDate.low) && dateToLocalTrunc(date) <= dateToLocalTrunc(filters.purchaseDate.high)
     ))
   )
 
@@ -42,7 +42,7 @@ const filterGear = (arr: Gear[], filters: GearFilters, defaultFilters: GearFilte
       numberInRange(gearItem.rentalCost, 'rentalCost') &&
       numberInRange(gearItem.powerDraw, 'powerDraw') &&
       numberInRange(gearItem.qtyOwned, 'qtyOwned') &&
-      dateInRange(gearItem.purchaseDates.map(item => new Date(item.date))) &&
+      dateInRange(gearItem.purchaseDates.map(item => item.date)) &&
       serviceTicketsMatch(gearItem.serviceTickets) &&
       locationsMatch(gearItem.locations.map(item => item.location))
     ))
