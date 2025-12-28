@@ -1,5 +1,8 @@
 import { push, ref, remove } from 'firebase/database';
-import rtdb from '@/app/rtdb_config';
+
+import rtdb from '@/app/DBConfig';
+import requestDBUpdate from '@/app/DBUpdateHandler';
+
 
 export default class Technician {
 	name: string;
@@ -29,9 +32,11 @@ export default class Technician {
 		push(ref(rtdb, 'TechnicianContainer/'), 
 			Object.fromEntries(Object.entries(this).filter(entry => typeof entry[1] != 'function' && entry[0] != 'key'))
 		);
+		requestDBUpdate();
 	}
 
 	delete = () => {
 		remove(ref(rtdb, `TechnicianContainer/${this.key}`));
+		requestDBUpdate();
 	}
 }

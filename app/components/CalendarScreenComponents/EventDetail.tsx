@@ -1,42 +1,265 @@
 import React, { useRef, useState } from 'react';
-import { FlatList, StyleSheet, View, Text, TouchableOpacity, ScrollView, useAnimatedValue, Animated, GestureResponderEvent, PanResponderGestureState, PanResponder } from 'react-native';
+import { FlatList, StyleSheet, View, Text, TouchableOpacity, ScrollView, Animated, PanResponder, TextInput } from 'react-native';
 import * as Linking from 'expo-linking';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import type Technician from '@/app/utils/Technician';
-import { GearContainer } from '@/app/utils/Gear';
-import Event, { STATUS } from '@/app/utils/Event';
+import Gear, { GearContainer } from '@/app/utils/Gear';
+import Event, { STATUS, GearList, GearListContainer } from '@/app/utils/Event';
 
-import globalStyles, { COLORS, dateToLocalTrunc } from '@/app/globals';
+import Dropdown from '@/app/components/Dropdown';
 
+import globalStyles, { checkObjEqual, COLORS, dateToLocalTrunc, KeyVal } from '@/app/globals';
+
+
+const DetailItem = (props: {label: string, text: string}) => (
+	<View>
+		<View style={styles.textBubble}><Text style={globalStyles.textInput}>{props.label}</Text></View>
+		<Text style={globalStyles.textInput}>{props.text}</Text>
+	</View> 
+)
+
+const DetailOverview = (props: {event: Event}) => (
+	<View>
+		<View style={styles.overviewRow}>
+			<View>
+				<View style={styles.textBubble}><Text style={globalStyles.textInput}>STATUS</Text></View>
+				<View style={{...styles.textBubble, backgroundColor: props.event.status.color, marginBottom: 0}}><Text style={globalStyles.textInput}>{props.event.status.name}</Text></View>
+			</View>
+
+			<DetailItem label={'MANAGER'} text={props.event.manager?.name as string}/>
+		</View>
+
+		<View style={styles.overviewRow}>
+			<DetailItem label={'CLIENT'} text={props.event.client as string}/>
+
+			<View>
+				<View style={styles.textBubble}><Text style={globalStyles.textInput}>CONTACT</Text></View>
+				<View style={{flexDirection: 'row'}}>
+					<Text style={globalStyles.textInput}>{props.event.contact}</Text>
+					{props.event.contactInfo?.includes('@') ?
+						<TouchableOpacity  onPress={() => Linking.openURL(`mailto:${props.event.contactInfo}`)} style={{marginLeft: 5}}>
+							<Ionicons name={'mail'} color={COLORS.GOLD} size={20}/>
+						</TouchableOpacity>
+					:
+						<View style={{flexDirection: 'row'}}>
+							<TouchableOpacity  onPress={() => Linking.openURL(`tel:${props.event.contactInfo}`)} style={{marginLeft: 5}}>
+								<Ionicons name={'call'} color={COLORS.GOLD} size={20} />
+							</TouchableOpacity>
+							<TouchableOpacity  onPress={() => Linking.openURL(`sms:${props.event.contactInfo}`)} style={{marginLeft: 10}}>
+								<Ionicons name={'chatbubble'} color={COLORS.GOLD} size={20} />
+							</TouchableOpacity>
+						</View>
+					}
+				</View>
+			</View>
+		</View>
+
+		<View style={{...styles.overviewRow, marginTop: 10}}>
+			<DetailItem label={'LOCATION'} text={props.event.location as string}/>
+			<DetailItem label={'SHOP'} text={props.event.shop as string}/>
+
+			{props.event.startDate != props.event.endDate && <DetailItem label={'MULTI-DAY'} text={
+				(new Date(dateToLocalTrunc(props.event.startDate)).toLocaleDateString('en-US', {timeZone: 'UTC', month: '2-digit', day: '2-digit'})) + '-' +
+				(new Date(dateToLocalTrunc(props.event.endDate)).toLocaleDateString('en-US', {timeZone: 'UTC', month: '2-digit', day: '2-digit'}))
+			}/>}
+		</View>
+
+		<View style={styles.overviewRow}>
+			<DetailItem label={'QUOTED'} text={props.event.dateQuoted ? new Date(dateToLocalTrunc(props.event.dateQuoted)).toLocaleDateString('en-US', {timeZone: 'UTC', month: '2-digit', day: '2-digit'}) : 'NO'}/>
+			<DetailItem label={'CONFIRMED'} text={props.event.dateConfirmed ? new Date(dateToLocalTrunc(props.event.dateConfirmed)).toLocaleDateString('en-US', {timeZone: 'UTC', month: '2-digit', day: '2-digit'}) : 'NO'}/>
+			<DetailItem label={'INVOICED'} text={props.event.dateInvoiced ? new Date(dateToLocalTrunc(props.event.dateInvoiced)).toLocaleDateString('en-US', {timeZone: 'UTC', month: '2-digit', day: '2-digit'}) : 'NO'}/>
+			<DetailItem label={'CONFIRMED'} text={props.event.datePaid ? new Date(dateToLocalTrunc(props.event.datePaid)).toLocaleDateString('en-US', {timeZone: 'UTC', month: '2-digit', day: '2-digit'}) : 'NO'}/>
+		</View>
+	</View>
+)
+
+
+const GearListComp = (props: {name: string, gear: Gear[], gearList: GearList, eventLocation: string, setGearList: (newList: GearList) => void}) => {
+	const [currentExpanded, setCurrentExpanded] = useState('');
+
+	const checkQtyValid = (gearItem: Gear, qty: number) => (
+		qty &&
+		gearItem.locations.filter(loc => loc.location == props.eventLocation).length && 
+		qty <= gearItem.locations.filter(loc => loc.location == props.eventLocation)[0].qty
+	)
+
+	return(
+		<View>
+			<Text style={globalStyles.textInput}>{props.name}</Text>
+			<FlatList
+				data={props.gearList}
+				renderItem={({item, index}) => {
+					const [currQty, setCurrQty] = useState(item.qty);
+					const [currGear, setCurrGear] = useState(item.gear);
+
+					return(
+						<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+							<View>
+								<View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize, borderColor: checkQtyValid(currGear, currQty) ? COLORS.GOLD : COLORS.RED}}>
+									<TextInput
+										value={currQty.toString()}
+										style={{...globalStyles.textInput, ...globalStyles.modalFieldSize}}
+										textAlign={'center'}
+										onChangeText={text => setCurrQty(Number(text))}
+										placeholder={'QTY'}
+										placeholderTextColor={COLORS.LIGHT_GRAY}
+										enterKeyHint={'done'}
+										contextMenuHidden
+										keyboardAppearance={'dark'}
+										keyboardType={'number-pad'}
+										maxLength={4}
+										selectionColor={COLORS.GOLD}
+									/>
+								</View>
+
+								{!checkQtyValid(currGear, currQty) &&
+									<Text style={{color: COLORS.RED}}>{`${currGear.locations.filter(loc => loc.location == props.eventLocation).length ? currGear.locations.filter(loc => loc.location == props.eventLocation)[0].qty : 0} AVAIL IN ${props.eventLocation}`}</Text>
+								}
+							</View>
+
+							<Dropdown
+								data={props.gear.filter(g => g.locations.filter(loc => loc.location == props.eventLocation).length).map(g => ({key: g.name, val: g}))} 
+								onSelect={(item: KeyVal) => setCurrGear(item.val)}
+								placeholderText={'ITEM'}
+								style={globalStyles.dropdown}
+								searchEnabled
+								expandLogic
+								name={'GEAR' + index}
+								onExpand={name => setCurrentExpanded(name)}
+								currentExpanded={currentExpanded}
+							/>
+
+							{(!checkObjEqual(currGear, item.gear) || currQty != item.qty) && checkQtyValid(currGear, currQty) &&
+								<TouchableOpacity style={styles.textBubble} onPress={() => {
+									let newList = props.gearList;
+									newList[index] = {qty: currQty, gear: currGear};
+									props.setGearList(newList);
+								}}>
+									<Text>UPDATE</Text>
+								</TouchableOpacity>
+							}
+
+							<Text style={globalStyles.textInput}>{'$' + currGear.rentalCost}</Text>
+							<Text style={globalStyles.textInput}>{'$' + (currGear.rentalCost * currQty)}</Text>
+						</View>
+					)
+				}}
+				
+				ListHeaderComponent={() => 
+					<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+						<Text style={globalStyles.textInput}>QTY</Text>
+						<Text style={globalStyles.textInput}>ITEM</Text>
+						<Text style={globalStyles.textInput}>EACH</Text>
+						<Text style={globalStyles.textInput}>TOTAL</Text>
+					</View>
+				}
+				
+				ListFooterComponent={() => {
+					const [currQty, setCurrQty] = useState(NaN);
+					const [currGear, setCurrGear] = useState({} as Gear);
+
+					return(
+						<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+							<View>
+								<View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize, borderColor: checkQtyValid(currGear, currQty) ? COLORS.GOLD : COLORS.RED}}>
+									<TextInput
+										value={''}
+										style={{...globalStyles.textInput, ...globalStyles.modalFieldSize}}
+										textAlign={'center'}
+										onChangeText={text => setCurrQty(Number(text))}
+										placeholder={'QTY'}
+										placeholderTextColor={COLORS.LIGHT_GRAY}
+										enterKeyHint={'done'}
+										contextMenuHidden
+										keyboardAppearance={'dark'}
+										keyboardType={'number-pad'}
+										maxLength={4}
+										selectionColor={COLORS.GOLD}
+									/>
+								</View>
+
+								{!checkQtyValid(currGear, currQty) &&
+									<Text style={{color: COLORS.RED}}>{`${currGear.locations.filter(loc => loc.location == props.eventLocation).length ? currGear.locations.filter(loc => loc.location == props.eventLocation)[0].qty : 0} AVAIL IN ${props.eventLocation}`}</Text>
+								}
+							</View>
+
+							<Dropdown
+								data={props.gear.filter(g => g.locations.filter(loc => loc.location == props.eventLocation).length).map(g => ({key: g.name, val: g}))} 
+								onSelect={(item: KeyVal) => setCurrGear(item.val)}
+								placeholderText={'ITEM'}
+								style={globalStyles.dropdown}
+								searchEnabled
+								expandLogic
+								name={'GEAR NEW'}
+								onExpand={name => setCurrentExpanded(name)}
+								currentExpanded={currentExpanded}
+							/>
+
+							{!checkObjEqual(currGear, {}) && checkQtyValid(currGear, currQty) &&
+								<TouchableOpacity onPress={() => props.setGearList([...props.gearList, {qty: currQty, gear: currGear}])} style={styles.textBubble}>
+									<Text>ADD</Text>
+								</TouchableOpacity>
+							}
+
+							<Text style={globalStyles.textInput}>{'$' + currGear.rentalCost}</Text>
+							<Text style={globalStyles.textInput}>{'$' + (currGear.rentalCost * currQty)}</Text>
+						</View>
+					)
+				}}
+			/>
+		</View>	
+	)
+}
+
+const StatusView = (props: {event: Event}) => (
+	<FlatList
+		data={Object.values(STATUS)}
+		renderItem={({item}) => (
+			<View style={{alignContent: 'center', margin: 10, marginTop: 20, marginBottom: 25, marginLeft: item.step == 0 ? 0 : 10, width: item.step == 6 ? 80 : 110}}>
+				<View style={{flexDirection: 'row', opacity: item.step <= props.event.status.step ? 1 : .5}}>
+					<View style={{...styles.progressBubble, backgroundColor: item.color}}/>
+					{item.step != 6 && <Ionicons name={'chevron-forward-outline'} color={COLORS.WHITE} size={40}/>}
+				</View>
+				<Text style={globalStyles.textInput}>{item.name}</Text>
+			</View>
+		)}
+		horizontal
+		showsHorizontalScrollIndicator={false}
+		initialScrollIndex={props.event.status.step ? props.event.status.step - 1 : 0}
+		getItemLayout={(data, index) => ({length: 110, offset: index * 110, index})}
+	/>
+)
 
 
 const EventDetail = (props: {onClose: () => void, currDate: number, techs: Technician[], gear: GearContainer, events: Event[]}) => {
 	const [selectedEvent, setSelectedEvent] = useState(props.events[0]);
 	const [expanded, setExpanded] = useState(false);
-
 	const currHeight = useRef(175)
 	const animHeight = React.useRef(new Animated.Value(175)).current;
 
-	const panResponder = useRef(PanResponder.create({
-		onStartShouldSetPanResponder: (evt) => (evt.nativeEvent.locationY <= 25),
+	const panResponder = PanResponder.create({
+		onStartShouldSetPanResponder: (evt) => (evt.nativeEvent.locationY < 15),
 		onPanResponderMove: (_, gestureState) => Animated.spring(animHeight, {toValue: currHeight.current - gestureState.dy, tension: 20, useNativeDriver: false}).start(),
 		onPanResponderRelease: (_, gestureState) => {
 			currHeight.current -= gestureState.dy;
 			if (currHeight.current > 300) {
 				Animated.spring(animHeight, {toValue: 525, tension: 20, useNativeDriver: false}).start();
+				currHeight.current = 525;
 				setExpanded(true);
 			} else if (currHeight.current < 100 && !expanded) {
-				Animated.spring(animHeight, {toValue: 20, tension: 20, useNativeDriver: false}).start();
+				Animated.spring(animHeight, {toValue: 10, tension: 20, useNativeDriver: false}).start();
+				currHeight.current = 175;
 				props.onClose();
 			} else {
 				Animated.spring(animHeight, {toValue: 175, tension: 20, useNativeDriver: false}).start();
+				currHeight.current = 175;
 				setExpanded(false)
 			}
 		}
 		
-	})).current;
+	});
 
 	return (
 			<Animated.View style={{...styles.container, height: animHeight}} {...panResponder.panHandlers}>
@@ -55,107 +278,27 @@ const EventDetail = (props: {onClose: () => void, currDate: number, techs: Techn
 							</TouchableOpacity>
 						}
 						horizontal
+					  showsHorizontalScrollIndicator={false}
 						style={{alignSelf: 'center'}}
 					/>
 				</View>
 
-				<ScrollView pagingEnabled={!expanded}>
-					<View style={styles.overviewRow}>
-						<View>
-							<View style={styles.textBubble}><Text style={globalStyles.textInput}>STATUS</Text></View>
-							<View style={{...styles.textBubble, backgroundColor: selectedEvent.status.color, marginBottom: 0}}><Text style={globalStyles.textInput}>{selectedEvent.status.name}</Text></View>
+				<ScrollView pagingEnabled={!expanded} showsVerticalScrollIndicator={false}>
+					<DetailOverview event={selectedEvent}/>
+
+					<StatusView event={selectedEvent}/>
+					
+					{expanded && 
+						<View style={{margin: 10}}>
+							<GearListComp name={'SHOW CONTROL EQUIPMENT'} gear={props.gear.showControl} gearList={selectedEvent.gear.showControl} eventLocation={selectedEvent.shop} setGearList={newList => selectedEvent.setGear({...selectedEvent.gear, showControl: newList})}/>				
+							<GearListComp name={'LX EQUIPMENT'} gear={props.gear.lxFixtures} gearList={selectedEvent.gear.lxFixtures} eventLocation={selectedEvent.shop} setGearList={newList => selectedEvent.setGear({...selectedEvent.gear, lxFixtures: newList})}/>
+							<GearListComp name={'LASER EQUIPMENT'} gear={props.gear.laserFixtures} gearList={selectedEvent.gear.laserFixtures} eventLocation={selectedEvent.shop} setGearList={newList => selectedEvent.setGear({...selectedEvent.gear, laserFixtures: newList})}/>
+							<GearListComp name={'INFRASTRUCTURE'} gear={props.gear.infrastructure} gearList={selectedEvent.gear.infrastructure} eventLocation={selectedEvent.shop} setGearList={newList => selectedEvent.setGear({...selectedEvent.gear, infrastructure: newList})}/>
+							<GearListComp name={'SFX EQUIPMENT'} gear={props.gear.sfx} gearList={selectedEvent.gear.sfx} eventLocation={selectedEvent.shop} setGearList={newList => selectedEvent.setGear({...selectedEvent.gear, sfx: newList})}/>
+							<GearListComp name={'CABLE'} gear={props.gear.cable} gearList={selectedEvent.gear.cable} eventLocation={selectedEvent.shop} setGearList={newList => selectedEvent.setGear({...selectedEvent.gear, cable: newList})}/>
 						</View>
-
-						<View>
-							<View style={styles.textBubble}><Text style={globalStyles.textInput}>MANAGER</Text></View>
-							<Text style={globalStyles.textInput}>{selectedEvent.manager?.name}</Text>
-						</View>
-
-						<View>
-							<View style={styles.textBubble}><Text style={globalStyles.textInput}>CLIENT</Text></View>
-							<Text style={globalStyles.textInput}>{selectedEvent.client}</Text>
-						</View> 
-					</View>
-
-					<View style={styles.overviewRow}>
-						<View>
-							<View style={styles.textBubble}><Text style={globalStyles.textInput}>LOCATION</Text></View>
-							<Text style={globalStyles.textInput}>{selectedEvent.location}</Text>
-						</View>
-
-						{selectedEvent.startDate != selectedEvent.endDate && <View>
-							<View style={styles.textBubble}><Text style={globalStyles.textInput}>MULTI-DAY</Text></View>
-							<Text style={globalStyles.textInput}>{
-								(new Date(dateToLocalTrunc(selectedEvent.startDate)).toLocaleDateString('en-US', {timeZone: 'UTC', month: '2-digit', day: '2-digit'})) + '-' +
-								(new Date(dateToLocalTrunc(selectedEvent.endDate)).toLocaleDateString('en-US', {timeZone: 'UTC', month: '2-digit', day: '2-digit'}))
-							}
-							</Text>
-						</View>}
-					</View>
-
-					<View style={{...styles.overviewRow, marginTop: 10}}>
-						<View>
-							<View style={styles.textBubble}><Text style={globalStyles.textInput}>CONTACT</Text></View>
-							<View style={{flexDirection: 'row'}}>
-								<Text style={globalStyles.textInput}>{selectedEvent.contact}</Text>
-								{selectedEvent.contactInfo?.includes('@') ?
-									<TouchableOpacity  onPress={() => Linking.openURL(`mailto:${selectedEvent.contactInfo}`)} style={{marginLeft: 5}}>
-										<Ionicons name={'mail'} color={COLORS.GOLD} size={20}/>
-									</TouchableOpacity>
-								:
-									<View style={{flexDirection: 'row'}}>
-										<TouchableOpacity  onPress={() => Linking.openURL(`tel:${selectedEvent.contactInfo}`)} style={{marginLeft: 5}}>
-											<Ionicons name={'call'} color={COLORS.GOLD} size={20} />
-										</TouchableOpacity>
-										<TouchableOpacity  onPress={() => Linking.openURL(`sms:${selectedEvent.contactInfo}`)} style={{marginLeft: 10}}>
-											<Ionicons name={'chatbubble'} color={COLORS.GOLD} size={20} />
-										</TouchableOpacity>
-									</View>
-								}
-							</View>
-						</View>
-					</View>
-
-					<View style={styles.overviewRow}>
-						<View>
-							<View style={styles.textBubble}><Text style={globalStyles.textInput}>QUOTED</Text></View>
-							<Text style={globalStyles.textInput}>{selectedEvent.dateQuoted ? new Date(dateToLocalTrunc(selectedEvent.dateQuoted)).toLocaleDateString('en-US', {timeZone: 'UTC', month: '2-digit', day: '2-digit'}) : 'NO'}</Text>
-						</View>
-
-						<View>
-							<View style={styles.textBubble}><Text style={globalStyles.textInput}>CONFIRMED</Text></View>
-							<Text style={globalStyles.textInput}>{selectedEvent.dateConfirmed ? new Date(dateToLocalTrunc(selectedEvent.dateConfirmed)).toLocaleDateString('en-US', {timeZone: 'UTC', month: '2-digit', day: '2-digit'}) : 'NO'}</Text>
-						</View>
-
-						<View>
-							<View style={styles.textBubble}><Text style={globalStyles.textInput}>INVOICED</Text></View>
-							<Text style={globalStyles.textInput}>{selectedEvent.dateInvoiced ? new Date(dateToLocalTrunc(selectedEvent.dateInvoiced)).toLocaleDateString('en-US', {timeZone: 'UTC', month: '2-digit', day: '2-digit'}) : 'NO'}</Text>
-						</View> 
-
-						<View>
-							<View style={styles.textBubble}><Text style={globalStyles.textInput}>PAID</Text></View>
-							<Text style={globalStyles.textInput}>{selectedEvent.datePaid ? new Date(dateToLocalTrunc(selectedEvent.datePaid)).toLocaleDateString('en-US', {timeZone: 'UTC', month: '2-digit', day: '2-digit'}) : 'NO'}</Text>
-						</View> 
-					</View>
-				
-
-					<FlatList
-						data={Object.values(STATUS)}
-						renderItem={({item}) => (
-							<View style={{alignContent: 'center', margin: 10, marginTop: 20, marginBottom: 25, marginLeft: item.step == 0 ? 0 : 10, width: item.step == 6 ? 80 : 110}}>
-								<View style={{flexDirection: 'row', opacity: item.step <= selectedEvent.status.step ? 1 : .5}}>
-									<View style={{...styles.progressBubble, backgroundColor: item.color}}/>
-									{item.step != 6 && <Ionicons name={'chevron-forward-outline'} color={COLORS.WHITE} size={40}/>}
-								</View>
-								<Text style={globalStyles.textInput}>{item.name}</Text>
-							</View>
-						)}
-						horizontal
-						initialScrollIndex={selectedEvent.status.step ? selectedEvent.status.step - 1 : 0}
-						getItemLayout={(data, index) => ({length: 110, offset: index * 110, index})}
-					/>
+					}
 				</ScrollView>
-
 			</Animated.View>
 	)
 }

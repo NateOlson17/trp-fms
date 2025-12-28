@@ -12,7 +12,7 @@ const Index = () => {
           <Link href="/components/CalendarScreen" style={{color: COLORS.WHITE}}>
             LOG IN
           </Link>
-        </SafeAreaView>     
+        </SafeAreaView>
       
     );
 }

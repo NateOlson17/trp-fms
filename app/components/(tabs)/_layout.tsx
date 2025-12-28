@@ -1,22 +1,21 @@
-import React, { useEffect, useState, createContext } from 'react';
+import React, { useEffect, useState, createContext, useRef } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { Tabs } from 'expo-router';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-import { onValue, ref } from 'firebase/database';
-import rtdb from '@/app/rtdb_config';
-
-import Gear, { GearContainer } from '@/app/utils/Gear';
+import { GearContainer } from '@/app/utils/Gear';
 import Event from '@/app/utils/Event';
 import Technician from '@/app/utils/Technician';
 
 import { COLORS } from '@/app/globals';
 
+import updateDB, { bindDBUpdater } from '@/app/DBUpdater';
+
+
 export const GearContext = createContext({} as GearContainer);
 export const EventContext = createContext<Event[]>([]);
 export const TechContext = createContext<Technician[]>([]);
-
 
 export default function TabLayout() {
   const [gear, setGear] = useState<GearContainer>({infrastructure: [], laserFixtures: [], lxFixtures: [], sfx: [], showControl: [], cable: []});
@@ -25,45 +24,18 @@ export default function TabLayout() {
 
   const [loading, setLoading] = useState(true);
 
+  const gearRef = useRef(gear);
+  const eventsRef = useRef(events);
+  const techsRef = useRef(techs);
+
+  useEffect(() => {gearRef.current = gear;}, [gear]);
+  useEffect(() => {eventsRef.current = events;}, [events]);
+  useEffect(() => {techsRef.current = techs;}, [techs]);
+
   useEffect(() => {
-    const gearRef = ref(rtdb, 'GearContainer'); //create reference to firebase rtdb at master gear container
-    onValue(gearRef, snapshot => {
-      if (snapshot.exists()) {
-        let tempGear: GearContainer = {infrastructure: [], laserFixtures: [], lxFixtures: [], sfx: [], showControl: [], cable: []};
-        snapshot.forEach(container => { //for each category object in master container (infrastructure, lxFixtures, etc)
-          container.forEach(gearItem => { //for each Gear item in category
-            tempGear[container.key as keyof GearContainer].push(new Gear({...gearItem.val(), key: `${container.key}/${gearItem.key}`})); //get key of current category and push to corresponding Gear array a new Gear object with data from current item
-            //structure of gear state is now a GearContainer object consisting of arrays for each category. Each array contains Gear objects
-          });
-        });
-        setGear(tempGear);
-      } else {console.log('GEAR OFFLINE');}
-    });
-    
-    const techRef = ref(rtdb, 'TechnicianContainer'); //create reference to firebase rtdb at tech container
-    onValue(techRef, snapshot => {
-      if (snapshot.exists()) {
-        let tempTechs: Technician[] = [];
-        snapshot.forEach(tech => {
-          tempTechs.push(new Technician({...tech.val(), key: tech.key})); //create new Technician with DB data
-        });
-        setTechs(tempTechs);
-      } else {console.log('TECHS OFFLINE');}
-    });
-
-    const eventRef = ref(rtdb, 'EventContainer'); //create reference to firebase rtdb at event container
-    onValue(eventRef, snapshot => {
-      if (snapshot.exists()) {
-        let tempEvents: Event[] = [];
-        snapshot.forEach(event => {
-          tempEvents.push(new Event({...event.val(), key: event.key})); //create new event for each item in DB container
-        });
-        setEvents(tempEvents);
-      } else {console.log('EVENTS OFFLINE');}
-    });
-
-    setTimeout(() => setLoading(false), 2000)
-  }, []); 
+    bindDBUpdater(gearRef, eventsRef, techsRef, setGear, setEvents, setTechs);
+    updateDB(true).finally(() => setLoading(false));
+  }, []);
   
   return (
     <GearContext.Provider value={gear}>

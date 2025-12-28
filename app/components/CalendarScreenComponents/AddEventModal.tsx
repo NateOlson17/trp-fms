@@ -9,7 +9,8 @@ import Technician from '@/app/utils/Technician'
 import GenericModal from '@/app/components/GenericModal'
 import Dropdown from '@/app/components/Dropdown';
 
-import globalStyles, { COLORS, KeyVal } from '@/app/globals';
+import globalStyles, { COLORS, KeyVal, STD_OPTIONS } from '@/app/globals';
+import Radio from '@/app/components/Radio';
 
 const AddEventModal = ({techs, onClose}: {techs: Technician[], onClose: () => void}) => {
   const [newEvent, setNewEvent] = useState<Partial<Event>>({startDate: new Date().getTime(), endDate: new Date().getTime()});
@@ -127,6 +128,13 @@ const AddEventModal = ({techs, onClose}: {techs: Technician[], onClose: () => vo
           />
         </View>
       </View>
+      
+      <Radio
+        data={STD_OPTIONS.locations}
+        onSelect={option => setNewEvent({...newEvent, shop: option.val})}
+        defaultOption={{key: 'CO', val: 'CO'}}
+        style={{margin: 'auto'}}
+      />
     </GenericModal>
   )
 }

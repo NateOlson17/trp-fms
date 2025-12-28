@@ -1,9 +1,12 @@
-import { push, ref, remove } from 'firebase/database';
-import rtdb from '@/app/rtdb_config';
+import { push, ref, set } from 'firebase/database';
 
 import Gear from '@/app/utils/Gear';
 import Technician from '@/app/utils/Technician';
-import { COLORS } from '../globals';
+
+import { COLORS } from '@/app/globals';
+
+import requestDBUpdate from '@/app/DBUpdateHandler';
+import rtdb from '@/app/DBConfig';
 
 
 export type Cost = {
@@ -24,13 +27,16 @@ export class STATUS {
 	private constructor(public readonly step: number, public readonly color: string, public readonly name: string) {}
 }
 
+export type GearList = {qty: number, gear: Gear}[];
+export type GearListContainer = {lxFixtures: GearList, laserFixtures: GearList, infrastructure: GearList, sfx: GearList, showControl:GearList, cable: GearList};
+
 export default class Event {
-	name?: string;
-	location?: string;
-	client?: string;
+	name: string;
+	location: string;
+	client: string;
 	manager?: Technician;
-	contact?: string;
-	contactInfo?: string;
+	contact: string;
+	contactInfo: string;
 
 	startDate: number;
 	endDate: number;
@@ -38,13 +44,13 @@ export default class Event {
 	quotePrice?: number;
 	invoicePrice?: number;
 
-	gear: Gear[];
+	gear: GearListContainer;
 	techs: {tech: Technician, rate: number | undefined, paid: boolean | undefined}[] | undefined;
 
-	dateQuoted?: number;
-	dateConfirmed?: number;
-	dateInvoiced?: number;
-	datePaid?: number;
+	dateQuoted: number;
+	dateConfirmed: number;
+	dateInvoiced: number;
+	datePaid: number;
 
 	ROD: {item: string, time: number}[] | undefined;
 
@@ -59,6 +65,8 @@ export default class Event {
 	status: STATUS;
 	flagged: boolean;
 
+	shop: string;
+
 	key: string | undefined;
 
 	constructor(args: {
@@ -70,13 +78,13 @@ export default class Event {
 		contactInfo?: string,
 
 
-		startDate: number,
-		endDate: number,
+		startDate?: number,
+		endDate?: number,
 
 		quotePrice?: number,
 		invoicePrice?: number,
 
-		gear?: Gear[],
+		gear?: GearListContainer,
 		techs?: {tech: Technician, rate: number | undefined, paid: boolean | undefined}[],
 
 		dateQuoted?: number,
@@ -95,31 +103,33 @@ export default class Event {
 		notes?: string,
 
 		status?: STATUS,
-		flagged?: boolean
+		flagged?: boolean,
+
+		shop?: string,
 
 		key?: string
 	}) {
-		this.name = args.name;
-		this.location = args.location;
-		this.client = args.client;
+		this.name = args.name || '';
+		this.location = args.location || '';
+		this.client = args.client || '';
 		this.manager = args.manager ? new Technician(args.manager) : undefined;
-		this.contact = args.contact;
-		this.contactInfo = args.contactInfo;
+		this.contact = args.contact || '';
+		this.contactInfo = args.contactInfo || '';
 
-		this.startDate = args.startDate;
-		this.endDate = args.endDate;
+		this.startDate = args.startDate || 0;
+		this.endDate = args.endDate || 0;
 
 		this.quotePrice = args.quotePrice;
 		this.invoicePrice = args.invoicePrice;
 
-		this.gear = args.gear ? args.gear.map(gearItem => new Gear(gearItem)) : [];
+		this.gear = args.gear ? args.gear : {lxFixtures: [], laserFixtures: [], cable: [], infrastructure: [], sfx: [], showControl: []};
 		this.techs = args.techs ? args.techs.map(t => ({...t, tech: new Technician(t.tech)})) : undefined;
 
 
-		this.dateQuoted = args.dateQuoted;
-		this.dateConfirmed = args.dateConfirmed;
-		this.dateInvoiced = args.dateInvoiced;
-		this.datePaid = args.datePaid; 
+		this.dateQuoted = args.dateQuoted || 0;
+		this.dateConfirmed = args.dateConfirmed || 0;
+		this.dateInvoiced = args.dateInvoiced || 0;
+		this.datePaid = args.datePaid || 0; 
 
 		this.ROD = args.ROD;
 
@@ -134,6 +144,8 @@ export default class Event {
 		this.status = args.status || STATUS.RESERVED;
 		this.flagged = args.flagged || false;
 
+		this.shop = args.shop || 'CO';
+
 		this.key = args.key;
 	}
 
@@ -142,23 +154,12 @@ export default class Event {
 			{...Object.fromEntries(Object.entries(this).filter(entry => entry[1] && typeof entry[1] != 'function' && entry[0] != 'key')), 
 				manager: Object.fromEntries(Object.entries(this.manager as Technician).filter(entry => entry[1] && typeof entry[1] != 'function' && entry[0] != 'key'))}
 		);
+		requestDBUpdate();
 	}
 
-	sendQuote() {
-		//pack into pdf and show to user, then prompt to send to client, which opens an email or text window prefilled
-	}
-
-	sendInvoice() {
-		//fill info based on logged in manager
-		//modify quote slightly and show to user, prompt changes then prompt sending
-	}
-
-	submitOutbounding() {
-		//create checklist for outbound gear with notes, user checks and leaves note and that info is stored as an object member variable Outbounding
-	}
-
-	submitInbounding() {
-			
+	setGear = (newGear: GearListContainer) => {
+		set(ref(rtdb, `EventContainer/${this.key}/gear`), newGear);
+		requestDBUpdate()
 	}
 
 }
