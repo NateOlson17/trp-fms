@@ -5,7 +5,7 @@
 ## GENERAL
 
 -Memoize components?
--Store sub objects by key in DB, such as Technician on gig etc, instead of storing full object which can change, look up actual object as needed. Make sure that objects are created on init from raw data pulled down from DB.
+-Find a better way to handle GearContainer. Lots of manually initializing blank instances, and the type GearListContainer is very similar. It's also hard to search within GearContainer
 -Improve FlatList performance (<https://reactnative.dev/docs/optimizing-flatlist-configuration>)
 -Login via Technician object, pass user Technician object and online status as Context. Use this context to disable certain features. Set up firebase rules accordingly
 -Update DB content
@@ -18,6 +18,7 @@
 
 ## EVENT SCREEN
 
+!-Write Event.getGear function. Keep in mind that Gear.key is 'lxFixtures/asdoqwm4392m' for example. DONT FORGET THAT I WIPED DB!!! MAKE SURE THAT TECHNICIAN IS STILL SAVED AS STRING KEY WHEN CREATING EVENT. MODIFY SETGEAR FUNCTION ON EVENT TO MAP BACK TO STRINGS BEFORE SAVING AS WELL! CHANGE STATE VARS TO BE NAMED managerKey or gearKeyList ETC FOR READABILITY.
 -Search/filter buttons, re render calendar after adding/filtering/searching (immutable markedDates list?)
 -Edit button
 -Custom styling on events to show number of events on a day, overlapping events, etc. Make selected day and current day more obvious
@@ -36,13 +37,14 @@
 -Ability to set a "needs attention" flag. Set automatically if missing items on inbound or outbound
 -Tech list (as dropdown for role in show - can add multiple, and dropdown for tech - show possible roles in dropdown, options to add/delete/contact, rate and days if more than one to right, don't forget to restrict based on availability and disallow role overlaps)
 -ROD (options to edit/delete/add - preset options to add like call time/curfew/etc or custom)
-!-Notes field
+-Notes field
+-Finish gear list feature on EventDetail, including total price etc
 
 ## LABOR SCREEN
 
 -Filter reset: force rerender of location radio
 -Edit button
--Better UI for selecting roles, get rid of text and use arrow only? Textonly prop on Dropdown component
+-Better UI for selecting roles, get rid of text and use arrow only? Text only prop on Dropdown component
 -Option to generate 1099
 -Outline tech in red if unpaid for anything. Show amount as numbered bubble much like ServiceTickets on gear card
 -Individual calendar for each tech (show confirmed/unconfirmed dates in different colors)

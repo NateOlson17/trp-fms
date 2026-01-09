@@ -1,46 +1,24 @@
-import React, { useEffect, useState, createContext, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { Tabs } from 'expo-router';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
-
-import { GearContainer } from '@/app/utils/Gear';
-import Event from '@/app/utils/Event';
-import Technician from '@/app/utils/Technician';
 
 import { COLORS } from '@/app/globals';
 
 import updateDB, { bindDBUpdater } from '@/app/DBUpdater';
 
 
-export const GearContext = createContext({} as GearContainer);
-export const EventContext = createContext<Event[]>([]);
-export const TechContext = createContext<Technician[]>([]);
-
 export default function TabLayout() {
-  const [gear, setGear] = useState<GearContainer>({infrastructure: [], laserFixtures: [], lxFixtures: [], sfx: [], showControl: [], cable: []});
-  const [events, setEvents] = useState<Event[]>([]);
-  const [techs, setTechs] = useState<Technician[]>([]);
-
   const [loading, setLoading] = useState(true);
 
-  const gearRef = useRef(gear);
-  const eventsRef = useRef(events);
-  const techsRef = useRef(techs);
-
-  useEffect(() => {gearRef.current = gear;}, [gear]);
-  useEffect(() => {eventsRef.current = events;}, [events]);
-  useEffect(() => {techsRef.current = techs;}, [techs]);
-
   useEffect(() => {
-    bindDBUpdater(gearRef, eventsRef, techsRef, setGear, setEvents, setTechs);
+    bindDBUpdater();
     updateDB(true).finally(() => setLoading(false));
   }, []);
   
   return (
-    <GearContext.Provider value={gear}>
-    <TechContext.Provider value={techs}>
-    <EventContext.Provider value={events}>
+    <View style={{flex: 1}}>
       {loading ?
         <View style={{flex: 1, backgroundColor: COLORS.BLACK, alignContent: 'center', justifyContent: 'center'}}>
           <ActivityIndicator size='large' color={COLORS.GOLD}/>
@@ -103,9 +81,7 @@ export default function TabLayout() {
           
         </Tabs>
       }
-    </EventContext.Provider>
-    </TechContext.Provider>
-    </GearContext.Provider>    
+    </View>
   );
 }
 

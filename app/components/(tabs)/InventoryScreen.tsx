@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { TouchableOpacity, View, StyleSheet, useAnimatedValue, Animated, TextInput } from 'react-native';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -11,9 +11,8 @@ import AddGearModal from '@/app/components/InventoryScreenComponents/AddGearModa
 import AddTicketModal from '@/app/components/InventoryScreenComponents/AddTicketModal';
 import FilterGearModal, { getDefaultGearFilters, GearFilters } from '@/app/components/InventoryScreenComponents/FilterGearModal';
 
-import globalStyles, { checkObjEqual, COLORS, dateToLocalTrunc } from '@/app/globals';
+import globalStyles, { checkObjEqual, COLORS, dateToLocalTrunc, useMasterGear } from '@/app/globals';
 
-import { GearContext } from '@/app/components/(tabs)/_layout';
 
 const filterGear = (arr: Gear[], filters: GearFilters, defaultFilters: GearFilters, searchText: string) => {
   const applied = (prop: keyof GearFilters) => (filters[prop] !== defaultFilters[prop]) //determine if prop has been changed from default
@@ -52,7 +51,7 @@ const filterGear = (arr: Gear[], filters: GearFilters, defaultFilters: GearFilte
 
 
 const InventoryScreen = () => {
-  const gear = useContext(GearContext);
+  const gear = useMasterGear();
 
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [ticketModalVisible, setTicketModalVisible] = useState(false);

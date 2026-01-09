@@ -1,4 +1,32 @@
+import { useSyncExternalStore } from 'react';
 import { StyleSheet } from 'react-native';
+
+import Gear, { GearContainer } from '@/app/utils/Gear';
+import Technician from '@/app/utils/Technician';
+import Event from '@/app/utils/Event';
+
+class MasterDB {
+  private listeners = new Set<() => void>();
+  gear: GearContainer = {lxFixtures: [], laserFixtures: [], cable: [], infrastructure: [], sfx: [], showControl: []};
+  techs: Technician[] = [];
+  events: Event[] = [];
+
+  subscribe = (fn: () => void) => {
+    this.listeners.add(fn);
+    return() => this.listeners.delete(fn);
+  }
+
+  private notify = () => this.listeners.forEach(fn => fn())
+
+  setGear = (gear: GearContainer) => {if (!checkObjEqual(this.gear, gear)) {this.gear = gear; this.notify()}}
+  setEvents = (events: Event[]) => {if (!checkObjEqual(this.events, events)) {this.events = events; this.notify()}}
+  setTechs = (techs: Technician[]) => {if (!checkObjEqual(this.techs, techs)) {this.techs = techs; this.notify()}}
+}
+export const MASTER_DB = new MasterDB();
+
+export const useMasterGear = () => useSyncExternalStore(MASTER_DB.subscribe.bind(MASTER_DB), () => MASTER_DB.gear);
+export const useMasterEvents = () => useSyncExternalStore(MASTER_DB.subscribe.bind(MASTER_DB), () => MASTER_DB.events);
+export const useMasterTechs = () => useSyncExternalStore(MASTER_DB.subscribe.bind(MASTER_DB), () => MASTER_DB.techs);
 
 export enum COLORS {
     BLACK = '#141414',
@@ -37,7 +65,7 @@ export const dateToLocalTrunc = (timestamp: number) => {
   return localDate.getTime() - offset;
 };
 
-export const checkObjEqual = (obj1: object, obj2: object) => (JSON.stringify(obj1) === JSON.stringify(obj2))
+export const checkObjEqual = (obj1: object, obj2: object) => JSON.stringify(obj1) === JSON.stringify(obj2)
 
 const globalStyles = StyleSheet.create({
   screenWrapper: {

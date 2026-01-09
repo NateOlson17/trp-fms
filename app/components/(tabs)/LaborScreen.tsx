@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { View, TouchableOpacity, StyleSheet, FlatList, Text, useAnimatedValue, Animated, TextInput } from 'react-native';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -9,9 +9,8 @@ import AddTechModal from '@/app/components/LaborScreenComponents/AddTechModal';
 import FilterTechsModal, { getDefaultTechFilters, TechFilters } from '@/app/components/LaborScreenComponents/FilterTechsModal';
 import TechCard from '@/app/components/LaborScreenComponents/TechCard';
 
-import globalStyles, { COLORS, checkObjEqual } from '@/app/globals';
+import globalStyles, { COLORS, checkObjEqual, useMasterTechs } from '@/app/globals';
 
-import { TechContext } from '@/app/components/(tabs)/_layout';
 
 const filterTechs = (arr: Technician[], filters: TechFilters, searchText: string) => {
   if (!searchText && checkObjEqual(filters, getDefaultTechFilters())) return arr; //pass unfiltered array if no filters or search applied
@@ -26,7 +25,7 @@ const filterTechs = (arr: Technician[], filters: TechFilters, searchText: string
 }
 
 const LaborScreen = () => {
-  const techs = useContext(TechContext);
+  const techs = useMasterTechs();
 
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [filterModalVisible, setFilterModalVisible] = useState(false);

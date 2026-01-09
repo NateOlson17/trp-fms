@@ -4,7 +4,7 @@ import { FlatList, Text, TouchableOpacity, View, StyleSheet, TextInput } from 'r
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import ServiceTicket from '@/app/utils/ServiceTicket';
-import Gear from '@/app/utils/Gear';
+import Gear, { PurchaseDate } from '@/app/utils/Gear';
 
 import Radio from '@/app/components/Radio';
 
@@ -140,7 +140,7 @@ const DeleteView = ({gearItem, onClose}: {gearItem: Gear, onClose: () => void}) 
   )
 }
 
-const PurchaseItem = ({purchase}: {purchase: {qty: number, date: number, cost: number, location: string, notes: string}}) => (
+const PurchaseItem = ({purchase}: {purchase: PurchaseDate}) => (
   <View style={styles.historyItem}>
     <View style={styles.historyItemField}>
       <Text style={styles.cardBubbleText}>{formatDate(purchase.date)}</Text>
