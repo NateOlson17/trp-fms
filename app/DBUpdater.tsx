@@ -1,14 +1,13 @@
-import { Dispatch, MutableRefObject, SetStateAction } from "react";
-import { onValue, ref } from "firebase/database";
+import { onValue, ref } from 'firebase/database';
 
-import Gear, { GearContainer } from "@/app/utils/Gear";
-import Technician from "@/app/utils/Technician";
-import Event from "@/app/utils/Event";
+import Gear, { GearContainer } from '@/app/utils/Gear';
+import Technician from '@/app/utils/Technician';
+import Event from '@/app/utils/Event';
 
-import { checkObjEqual } from "@/app/globals";
+import { checkObjEqual, MASTER_DB } from '@/app/globals';
 
-import rtdb from "./DBConfig";
-import { registerDBUpdateHandler } from "@/app/DBUpdateHandler";
+import rtdb from '@/app/DBConfig';
+import { registerDBUpdateHandler } from '@/app/DBUpdateHandler';
 
 
 const getGear = async() => {
@@ -61,20 +60,13 @@ const getTechs = async() => {
 
 let boundUpdater: ((force?: boolean) => Promise<void>);
 
-export const bindDBUpdater = (
-  gearRef: MutableRefObject<GearContainer>,
-  eventsRef: MutableRefObject<Event[]>,
-  techsRef: MutableRefObject<Technician[]>,
-  setGear: Dispatch<SetStateAction<GearContainer>>,
-  setEvents: Dispatch<SetStateAction<Event[]>>,
-  setTechs: Dispatch<SetStateAction<Technician[]>>
-) => {
+export const bindDBUpdater = () => {
   boundUpdater = async(force = false) => {
     const [newGear, newEvents, newTechs] = await Promise.all([getGear(), getEvents(), getTechs()]);
 
-    if (!checkObjEqual(gearRef.current, newGear) || force) setGear(newGear);
-    if (!checkObjEqual(eventsRef.current, newEvents) || force) setEvents(newEvents);
-    if (!checkObjEqual(techsRef.current, newTechs) || force) setTechs(newTechs);
+    if (!checkObjEqual(MASTER_DB.gear, newGear) || force) MASTER_DB.setGear(newGear);
+    if (!checkObjEqual(MASTER_DB.events, newEvents) || force) MASTER_DB.setEvents(newEvents);
+    if (!checkObjEqual(MASTER_DB.techs, newTechs) || force) MASTER_DB.setTechs(newTechs);
   };
 };
 

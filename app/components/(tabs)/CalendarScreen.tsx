@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
 
@@ -7,16 +7,15 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import AddEventModal from '@/app/components/CalendarScreenComponents/AddEventModal';
 import EventDetail from '@/app/components/CalendarScreenComponents/EventDetail';
 
-import globalStyles, { COLORS, dateToLocalTrunc } from '@/app/globals';
+import globalStyles, { COLORS, dateToLocalTrunc, useMasterEvents, useMasterGear, useMasterTechs } from '@/app/globals';
 
-import { EventContext, GearContext, TechContext } from '@/app/components/(tabs)/_layout';
 import { STATUS } from '@/app/utils/Event';
 
 
 const CalendarScreen = () => {
-  const gear = useContext(GearContext);
-  const events = useContext(EventContext);
-  const techs = useContext(TechContext);
+  const gear = useMasterGear();
+  const events = useMasterEvents();
+  const techs = useMasterTechs();
 
   const getEventDates = () => {
     let newEventDates: any[] = [];

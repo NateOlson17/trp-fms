@@ -14,6 +14,14 @@ export type GearContainer = {
 	cable: Gear[];
 }
 
+export type PurchaseDate = {
+	qty: number, 
+	date: number, 
+	cost: number, 
+	location: string, 
+	notes: string
+}
+
 export default class Gear {
 	name: string;
 	includes: string[];
@@ -23,22 +31,22 @@ export default class Gear {
 	qtyOwned: number;
 	serviceTickets: ServiceTicket[];
 	notes: string;
-	purchaseDates: {qty: number, date: number, cost: number, location: string, notes: string}[];
+	purchaseDates: PurchaseDate[];
 	locations: {qty: number, location: string}[];
 	key: string;
 
 	constructor(args: {
 		name: string,
-		includes: string[] | undefined,
+		includes: string[],
 		avgPurchaseCost: number,
 		rentalCost: number,
 		powerDraw: number,
 		qtyOwned: number,
-		serviceTickets: ServiceTicket[] | undefined,
+		serviceTickets: ServiceTicket[],
 		notes: string | undefined,
-		purchaseDates: {qty: number, date: number, cost: number, location: string, notes: string}[],
+		purchaseDates: PurchaseDate[],
 		locations: {qty: number, location: string}[],
-		key: string | undefined
+		key: string
 	}) {
 		this.name = args.name;
 		this.includes = args.includes || [];
@@ -65,9 +73,7 @@ export default class Gear {
 	}
 
 	addToContainer = (container: keyof GearContainer) => {
-		push(ref(rtdb, `GearContainer/${container}`), 
-			Object.fromEntries(Object.entries(this).filter(entry => typeof entry[1] != 'function' && entry[0] != 'key'))
-		);
+		push(ref(rtdb, `GearContainer/${container}`), Object.fromEntries(Object.entries(this).filter(entry => typeof entry[1] != 'function' && entry[0] != 'key')));
 		requestDBUpdate();
 	}
 
@@ -81,9 +87,7 @@ export default class Gear {
 			this.locations.forEach(loc => {if (loc.location === location) {loc.qty += qty;}});
 		}
 
-		set(ref(rtdb, `GearContainer/${this.key}`), 
-			Object.fromEntries(Object.entries(this).filter(entry => typeof entry[1] != 'function' && entry[0] != 'key'))
-		);
+		set(ref(rtdb, `GearContainer/${this.key}`), Object.fromEntries(Object.entries(this).filter(entry => typeof entry[1] != 'function' && entry[0] != 'key')));
 		requestDBUpdate();
 	}
 
@@ -93,9 +97,7 @@ export default class Gear {
 		} else {
 			this.qtyOwned -= qty;
 			this.locations.forEach(loc => {if (loc.location === location) {loc.qty -= qty;}});
-			set(ref(rtdb, `GearContainer/${this.key}`), 
-				Object.fromEntries(Object.entries(this).filter(entry => typeof entry[1] != 'function' && entry[0] != 'key'))
-			);
+			set(ref(rtdb, `GearContainer/${this.key}`), Object.fromEntries(Object.entries(this).filter(entry => typeof entry[1] != 'function' && entry[0] != 'key')));
 		}
 		requestDBUpdate();
 	}

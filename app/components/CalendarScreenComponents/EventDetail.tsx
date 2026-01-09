@@ -6,7 +6,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 
 import type Technician from '@/app/utils/Technician';
 import Gear, { GearContainer } from '@/app/utils/Gear';
-import Event, { STATUS, GearList, GearListContainer } from '@/app/utils/Event';
+import Event, { STATUS, GearList } from '@/app/utils/Event';
 
 import Dropdown from '@/app/components/Dropdown';
 
@@ -28,7 +28,7 @@ const DetailOverview = (props: {event: Event}) => (
 				<View style={{...styles.textBubble, backgroundColor: props.event.status.color, marginBottom: 0}}><Text style={globalStyles.textInput}>{props.event.status.name}</Text></View>
 			</View>
 
-			<DetailItem label={'MANAGER'} text={props.event.manager?.name as string}/>
+			<DetailItem label={'MANAGER'} text={props.event.getManager().name as string}/>
 		</View>
 
 		<View style={styles.overviewRow}>
@@ -90,6 +90,7 @@ const GearListComp = (props: {name: string, gear: Gear[], gearList: GearList, ev
 			<Text style={globalStyles.textInput}>{props.name}</Text>
 			<FlatList
 				data={props.gearList}
+				scrollEnabled={false}
 				renderItem={({item, index}) => {
 					const [currQty, setCurrQty] = useState(item.qty);
 					const [currGear, setCurrGear] = useState(item.gear);
@@ -137,7 +138,7 @@ const GearListComp = (props: {name: string, gear: Gear[], gearList: GearList, ev
 									newList[index] = {qty: currQty, gear: currGear};
 									props.setGearList(newList);
 								}}>
-									<Text>UPDATE</Text>
+									<Text style={globalStyles.textInput}>UPDATE</Text>
 								</TouchableOpacity>
 							}
 
@@ -158,14 +159,14 @@ const GearListComp = (props: {name: string, gear: Gear[], gearList: GearList, ev
 				
 				ListFooterComponent={() => {
 					const [currQty, setCurrQty] = useState(NaN);
-					const [currGear, setCurrGear] = useState({} as Gear);
+					const [currGear, setCurrGear] = useState<Gear | null>(null);
 
 					return(
-						<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+						<View style={{flexDirection: 'row'}}>
 							<View>
-								<View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize, borderColor: checkQtyValid(currGear, currQty) ? COLORS.GOLD : COLORS.RED}}>
+								<View style={{...globalStyles.modalField, ...globalStyles.modalFieldSize, marginLeft: 0, borderColor: currGear && !checkQtyValid(currGear, currQty) ? COLORS.RED : COLORS.GOLD}}>
 									<TextInput
-										value={''}
+										value={currQty ? currQty.toString() : ''}
 										style={{...globalStyles.textInput, ...globalStyles.modalFieldSize}}
 										textAlign={'center'}
 										onChangeText={text => setCurrQty(Number(text))}
@@ -180,8 +181,14 @@ const GearListComp = (props: {name: string, gear: Gear[], gearList: GearList, ev
 									/>
 								</View>
 
-								{!checkQtyValid(currGear, currQty) &&
-									<Text style={{color: COLORS.RED}}>{`${currGear.locations.filter(loc => loc.location == props.eventLocation).length ? currGear.locations.filter(loc => loc.location == props.eventLocation)[0].qty : 0} AVAIL IN ${props.eventLocation}`}</Text>
+								{currGear && 
+									(!checkQtyValid(currGear, currQty) ?
+										<Text style={{color: COLORS.RED}}>{`  ${currGear.locations.filter(loc => loc.location == props.eventLocation).length ? currGear.locations.filter(loc => loc.location == props.eventLocation)[0].qty : 0} AVAIL\n   IN ${props.eventLocation}`}</Text>
+									:
+										<TouchableOpacity onPress={() => props.setGearList([...props.gearList, {qty: currQty, gear: currGear}])} style={{...styles.textBubble, marginRight: 20}}>
+											<Text style={globalStyles.textInput}>ADD</Text>
+										</TouchableOpacity>
+									)
 								}
 							</View>
 
@@ -197,14 +204,8 @@ const GearListComp = (props: {name: string, gear: Gear[], gearList: GearList, ev
 								currentExpanded={currentExpanded}
 							/>
 
-							{!checkObjEqual(currGear, {}) && checkQtyValid(currGear, currQty) &&
-								<TouchableOpacity onPress={() => props.setGearList([...props.gearList, {qty: currQty, gear: currGear}])} style={styles.textBubble}>
-									<Text>ADD</Text>
-								</TouchableOpacity>
-							}
-
-							<Text style={globalStyles.textInput}>{'$' + currGear.rentalCost}</Text>
-							<Text style={globalStyles.textInput}>{'$' + (currGear.rentalCost * currQty)}</Text>
+							{currGear && <Text style={globalStyles.textInput}>{'$' + currGear.rentalCost}</Text>}
+							{currGear && currQty && <Text style={globalStyles.textInput}>{'$' + (currGear.rentalCost * currQty)}</Text>}
 						</View>
 					)
 				}}
